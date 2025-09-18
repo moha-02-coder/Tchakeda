@@ -1,0 +1,293 @@
+<div class="page-container">
+  <div class="page-header">
+    <button class="btn btn-light back-btn" (click)="back()">
+      <i class="fas fa-arrow-left"></i> Bâtiments
+    </button>
+    <h4 class="page-title">Détail du bâtiment</h4>
+  </div>
+
+  <!-- Modal de suppression -->
+  <div *ngIf="showDeleteConfirm" class="modal-overlay">
+    <div class="modal-card">
+      <h5>Confirmer la suppression</h5>
+      <p>Voulez-vous vraiment supprimer ce bâtiment ? Cette action est irréversible.</p>
+      <div class="form-actions center">
+        <button type="button" class="btn btn-light" (click)="showDeleteConfirm = false">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="deleteBuilding()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <!-- En-tête avec actions -->
+    <div class="card-header">
+      <h5>Informations du bâtiment</h5>
+      <div class="action-buttons" *ngIf="!editMode">
+        <button class="action-btn edit" (click)="enableEdit()" title="Modifier">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn delete" title="Supprimer le bâtiment" (click)="showDeleteConfirm = true">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      <div class="action-buttons" *ngIf="editMode">
+        <button class="action-btn save" type="submit" form="buildingForm" title="Enregistrer">
+          <i class="fas fa-check"></i>
+        </button>
+        <button class="action-btn cancel" (click)="cancelEdit()" title="Annuler">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode édition -->
+    <form *ngIf="editMode" (ngSubmit)="save()" id="buildingForm" class="building-form">
+      <div class="form-grid">
+        <!-- Image du bâtiment -->
+        <div class="form-group card full-width">
+          <label>Image du bâtiment</label>
+          <div class="building-image-container">
+            <div class="image-wrapper">
+              <div class="image-container">
+                <img [src]="form.image || 'assets/images/default-building.jpg'" alt="Bâtiment" class="building-img" />
+                <div class="image-overlay">
+                  <i class="fas fa-camera"></i>
+                  <span>Changer l'image</span>
+                </div>
+              </div>
+              <input type="file" id="buildingImageUpload" (change)="onBuildingImageSelected($event)" class="file-input" accept="image/*" />
+              <label for="buildingImageUpload" class="file-input-label">Parcourir</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nom du bâtiment -->
+        <div class="form-group card">
+          <label>Nom du bâtiment</label>
+          <input type="text" [(ngModel)]="form.name" name="name" class="underline-input" required />
+          <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
+        </div>
+
+        <!-- Type de bâtiment -->
+        <div class="form-group card">
+          <label>Type de bâtiment</label>
+          <div class="input-with-button">
+            <select [(ngModel)]="form.type" name="type" class="underline-input" required (change)="onTypeChange($event)">
+              <option [ngValue]="null">Sélectionner...</option>
+              <option value="résidentiel">Résidentiel</option>
+              <option value="commercial">Commercial</option>
+              <option value="mixte">Mixte</option>
+              <option value="autre">Autre...</option>
+            </select>
+          </div>
+          <input *ngIf="isCustomType" type="text" [(ngModel)]="form.customType" name="customType" 
+                 class="underline-input custom-type-input" placeholder="Saisir le type" />
+          <div class="error" *ngIf="errors.type">{{ errors.type }}</div>
+          <div class="error" *ngIf="errors.customType">{{ errors.customType }}</div>
+        </div>
+
+        <!-- Nombre d'étages -->
+        <div class="form-group card">
+          <label>Nombre d'étages</label>
+          <input type="number" [(ngModel)]="form.floors" name="floors" class="underline-input" required min="1" />
+          <div class="error" *ngIf="errors.floors">{{ errors.floors }}</div>
+        </div>
+
+        <!-- Nombre d'appartements -->
+        <div class="form-group card">
+          <label>Nombre d'appartements</label>
+          <input type="number" [(ngModel)]="form.apartments" name="apartments" class="underline-input" required min="1" />
+          <div class="error" *ngIf="errors.apartments">{{ errors.apartments }}</div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="form-group card">
+          <label>Adresse</label>
+          <input type="text" [(ngModel)]="form.address" name="address" class="underline-input" required />
+          <div class="error" *ngIf="errors.address">{{ errors.address }}</div>
+        </div>
+
+        <!-- Ville -->
+        <div class="form-group card">
+          <label>Ville</label>
+          <input type="text" [(ngModel)]="form.city" name="city" class="underline-input" required />
+          <div class="error" *ngIf="errors.city">{{ errors.city }}</div>
+        </div>
+
+        <!-- Quartier / Région -->
+        <div class="form-group card">
+          <label>Quartier / Région</label>
+          <input type="text" [(ngModel)]="form.region" name="region" class="underline-input" required />
+          <div class="error" *ngIf="errors.region">{{ errors.region }}</div>
+        </div>
+
+        <!-- Date de construction -->
+        <div class="form-group card">
+          <label>Date de construction</label>
+          <input type="date" [(ngModel)]="form.constructionDate" name="constructionDate" class="underline-input" required />
+          <div class="error" *ngIf="errors.constructionDate">{{ errors.constructionDate }}</div>
+        </div>
+
+        <!-- Propriétaire -->
+        <div class="form-group card">
+          <label>Propriétaire</label>
+          <div class="select-with-action">
+            <select [(ngModel)]="form.ownerId" name="ownerId" class="underline-input" required>
+              <option [ngValue]="null">Sélectionner un propriétaire...</option>
+              <option *ngFor="let owner of owners" [ngValue]="owner.id">{{ owner.name }}</option>
+            </select>
+            <button type="button" class="btn btn-link" (click)="goToNewOwner()" title="Ajouter un propriétaire">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div class="error" *ngIf="errors.ownerId">{{ errors.ownerId }}</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions full-width">
+        <button type="button" class="btn btn-light" (click)="cancelEdit()">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+
+    <!-- Mode visualisation -->
+    <div *ngIf="!editMode" class="view-mode">
+      <!-- Image du bâtiment -->
+      <div class="building-image-container full-width">
+        <div class="image-wrapper">
+          <div class="image-container">
+            <img [src]="building?.image || 'assets/images/default-building.jpg'" alt="Bâtiment" class="building-img" />
+          </div>
+        </div>
+        <div *ngIf="!building?.image" class="no-image">
+          <i class="fas fa-building"></i>
+          <p>Aucune photo disponible</p>
+        </div>
+      </div>
+
+      <!-- Infos en grille -->
+      <div class="details-grid">
+        <div class="info-card">
+          <label>Nom du bâtiment</label>
+          <p>{{ building?.name || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Type de bâtiment</label>
+          <p>{{ building?.type === 'autre' ? (building?.customType || '-') : building?.type || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Nombre d'étages</label>
+          <p>{{ building?.floors || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Nombre d'appartements</label>
+          <p>{{ building?.apartments || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Adresse</label>
+          <p>{{ building?.address || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Ville</label>
+          <p>{{ building?.city || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Quartier / Région</label>
+          <p>{{ building?.region || '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Date de construction</label>
+          <p>{{ building && building.constructionDate ? (building.constructionDate | date:'dd/MM/yyyy') : '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <label>Propriétaire</label>
+          <p>{{ getOwnerName(building?.ownerId) || '-' }}</p>
+        </div>
+      </div>
+
+      <!-- Bouton de suppression en mode visualisation -->
+      <div class="form-actions full-width">
+        <button class="btn btn-danger" (click)="showDeleteConfirm = true">
+          <i class="fas fa-trash"></i> Supprimer le bâtiment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section appartements du bâtiment -->
+  <div class="form-card" *ngIf="!editMode && buildingApartments.length > 0">
+    <div class="card-header">
+      <h5>Appartements du bâtiment</h5>
+    </div>
+    
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Pièces</th>
+            <th>Locataire</th>
+            <th>Mensualité</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let apartment of buildingApartments" (click)="goToApartment(apartment.id)" class="clickable-row">
+            <td>{{ apartment.name || '-' }}</td>
+            <td>{{ apartment.type || '-' }}</td>
+            <td>{{ apartment.rooms || '-' }}</td>
+            <td>{{ apartment.tenant || 'Libre' }}</td>
+            <td>{{ apartment.mention ? (apartment.mention | number) + ' FCFA' : '-' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'status-occupied': apartment.tenant,
+                'status-free': !apartment.tenant
+              }">
+                {{ apartment.tenant ? 'Occupé' : 'Libre' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section statistiques -->
+  <div class="form-card" *ngIf="!editMode">
+    <div class="card-header">
+      <h5>Statistiques du bâtiment</h5>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ buildingApartments.length }}</div>
+        <div class="stat-label">Appartements total</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value">{{ occupiedApartmentsCount }}</div>
+        <div class="stat-label">Appartements occupés</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value">{{ freeApartmentsCount }}</div>
+        <div class="stat-label">Appartements libres</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value">{{ occupancyRate }}%</div>
+        <div class="stat-label">Taux d'occupation</div>
+      </div>
+    </div>
+  </div>
+</div>

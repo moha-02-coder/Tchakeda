@@ -1,0 +1,63 @@
+<div class="page-header">
+  <h4>Créer un propriétaire</h4>
+</div>
+
+<div class="content-container">
+  <form (ngSubmit)="create()" class="form-card owner-grid">
+
+    <!-- Nom complet -->
+    <div class="form-group">
+      <label>Nom complet</label>
+      <input type="text" [(ngModel)]="form.fullName" name="fullName" class="underline-input" required />
+      <div class="error" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+    </div>
+
+    <!-- Pays -->
+    <div class="form-group">
+      <label>Pays</label>
+      <input type="text" [(ngModel)]="form.country" name="country" class="underline-input" required />
+      <div class="error" *ngIf="errors.country">{{ errors.country }}</div>
+    </div>
+
+    <!-- Téléphone -->
+    <div class="form-group">
+      <label>Téléphone</label>
+      <input type="text" [(ngModel)]="form.phone" name="phone" class="underline-input" required />
+      <div class="error" *ngIf="errors.phone">{{ errors.phone }}</div>
+    </div>
+
+    <!-- Adresse -->
+    <div class="form-group">
+      <label>Adresse</label>
+      <input type="text" [(ngModel)]="form.adress" name="address" class="underline-input" required />
+      <div class="error" *ngIf="errors.address">{{ errors.address }}</div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="form.email" name="email" class="underline-input" required />
+      <div class="error" *ngIf="errors.email">{{ errors.email }}</div>
+    </div>
+
+    <!-- Bâtiment affilié avec bouton d'ajout -->
+    <div class="form-group">
+      <label>Bâtiment affilié</label>
+      <div class="input-with-button">
+        <select [(ngModel)]="form.buildingId" name="buildingId" class="underline-input">
+          <option [ngValue]="null">Sélectionner...</option>
+          <option *ngFor="let building of buildings" [ngValue]="building.id">{{ building.name }}</option>
+        </select>
+        <button type="button" class="btn btn-light" (click)="goToNewBuilding()">Nouveau bâtiment</button>
+      </div>
+      <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </div>
+
+  </form>
+</div>

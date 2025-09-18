@@ -1,0 +1,106 @@
+<div class="page-container">
+  <div class="page-header">
+    <button class="btn btn-light back-btn" (click)="cancel()">
+      <i class="fas fa-arrow-left"></i> Retour
+    </button>
+    <h4 class="page-title">Créer un appartement</h4>
+  </div>
+
+  <div class="content-container">
+    <form (ngSubmit)="create()" class="form-card">
+      <div class="form-grid">
+        <!-- Nom -->
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" [(ngModel)]="form.name" name="name" class="underline-input" required />
+          <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
+        </div>
+
+        <!-- Type -->
+        <div class="form-group">
+          <label>Type</label>
+          <select [(ngModel)]="form.type" name="type" class="underline-input" required>
+            <option [ngValue]="null">Sélectionner...</option>
+            <option value="Studio">Studio</option>
+            <option value="T2">T2</option>
+            <option value="T3">T3</option>
+            <option value="T4">T4</option>
+            <option value="Duplex">Duplex</option>
+          </select>
+          <div class="error" *ngIf="errors.type">{{ errors.type }}</div>
+        </div>
+
+        <!-- Nombre de pièces -->
+        <div class="form-group">
+          <label>Nombre de pièces</label>
+          <input type="number" [(ngModel)]="form.rooms" name="rooms" class="underline-input" required min="1" />
+          <div class="error" *ngIf="errors.rooms">{{ errors.rooms }}</div>
+        </div>
+
+        <!-- Location (montant) -->
+        <div class="form-group">
+          <label>Loyer mensuel</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" [(ngModel)]="form.rent" name="rent" class="underline-input" required min="1" />
+            <span class="currency">Fcfa</span>
+          </div>
+          <div class="error" *ngIf="errors.rent">{{ errors.rent }}</div>
+        </div>
+
+        <!-- Statut -->
+        <div class="form-group">
+          <label>Statut</label>
+          <input type="text" [(ngModel)]="form.status" name="status" class="underline-input" [readonly]="true" />
+        </div>
+
+        <!-- Bâtiment -->
+        <div class="form-group full-width">
+          <label>Bâtiment</label>
+          <div class="building-selector">
+            <select [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" required>
+              <option [ngValue]="0">Sélectionner...</option>
+              <option *ngFor="let building of buildings" [ngValue]="building.id">{{ building.name }}</option>
+            </select>
+            <button type="button" class="btn btn-light new-building-btn" (click)="goToNewBuilding()">
+              <i class="fas fa-plus"></i> Nouveau bâtiment
+            </button>
+          </div>
+          <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+        </div>
+
+        <!-- Images des pièces -->
+        <div class="form-group card full-width">
+          <label>Images des pièces</label>
+          <p class="input-description">Max 6 images (formats: jpg, jpeg, png, webp, taille max: 2Mo)</p>
+          
+          <div class="file-upload-container">
+            <label class="file-upload-label" [class.disabled]="images.length >= 6">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>{{ images.length >= 6 ? 'Maximum atteint' : 'Choisir des images' }}</span>
+              <input type="file" name="roomImages" accept="image/jpeg,image/png,image/webp" multiple 
+                     (change)="onImagesSelected($event)" [disabled]="images.length >= 6" />
+            </label>
+          </div>
+          
+          <div class="error" *ngIf="errors.roomImages">{{ errors.roomImages }}</div>
+          
+          <div class="image-preview-list" *ngIf="images.length > 0">
+            <div *ngFor="let img of images; let i = index" class="image-preview">
+              <img [src]="img" alt="Pièce {{i+1}}" />
+              <button type="button" class="remove-image" (click)="removeImage(i)">
+                <i class="fas fa-times"></i>
+              </button>
+              <div class="image-number">{{ i + 1 }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions full-width">
+        <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+        <button type="submit" class="btn btn-primary">Créer l'appartement</button>
+      </div>
+    </form>
+  </div>
+</div>

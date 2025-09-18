@@ -1,0 +1,98 @@
+<div class="page-header">
+  <h4>Créer une location</h4>
+</div>
+
+<div class="content-container">
+  <form (ngSubmit)="create()" class="form-card rental-grid">
+    
+    <!-- Propriétaire -->
+    <div class="form-group">
+      <label>Propriétaire</label>
+      <div class="input-with-button">
+        <select [(ngModel)]="form.ownerId" name="ownerId" class="underline-input" (change)="onOwnerChange()" required>
+          <option [ngValue]="0">Sélectionner...</option>
+          <option *ngFor="let owner of owners" [ngValue]="owner.id">{{ owner.name }}</option>
+        </select>
+        <button type="button" class="btn btn-light" (click)="goToNewOwner()">Nouveau propriétaire</button>
+      </div>
+      <div class="error" *ngIf="errors['ownerId']">{{ errors['ownerId'] }}</div>
+    </div>
+
+    <!-- Bâtiment -->
+    <div class="form-group">
+      <label>Bâtiment</label>
+      <div class="input-with-button">
+        <select [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" (change)="onBuildingChange()" required>
+          <option [ngValue]="0">Sélectionner...</option>
+          <option *ngFor="let building of filteredBuildings" [ngValue]="building.id">{{ building.name }}</option>
+        </select>
+        <button type="button" class="btn btn-light" (click)="goToNewBuilding()">Nouveau bâtiment</button>
+      </div>
+      <div class="error" *ngIf="errors['buildingId']">{{ errors['buildingId'] }}</div>
+    </div>
+
+    <!-- Appartement -->
+    <div class="form-group">
+      <label>Appartement</label>
+      <div class="input-with-button">
+        <select [(ngModel)]="form.apartmentId" name="apartmentId" class="underline-input" required>
+          <option [ngValue]="0">Sélectionner...</option>
+          <option *ngFor="let apartment of filteredApartments" [ngValue]="apartment.id">{{ apartment.name }}</option>
+        </select>
+        <button type="button" class="btn btn-light" (click)="goToNewApartment()">Nouvel appartement</button>
+      </div>
+      <div class="error" *ngIf="errors['apartmentId']">{{ errors['apartmentId'] }}</div>
+    </div>
+
+    <!-- Locataire -->
+    <div class="form-group">
+      <label>Locataire</label>
+      <div class="input-with-button">
+        <select [(ngModel)]="form.tenantId" name="tenantId" class="underline-input" required>
+          <option [ngValue]="0">Sélectionner...</option>
+          <option *ngFor="let tenant of tenants" [ngValue]="tenant.id">{{ tenant.name }}</option>
+        </select>
+        <button type="button" class="btn btn-light" (click)="goToNewTenant()">Nouveau locataire</button>
+      </div>
+      <div class="error" *ngIf="errors['tenantId']">{{ errors['tenantId'] }}</div>
+    </div>
+
+    <!-- Mensualité -->
+    <div class="form-group full-width">
+      <label>Loyer mensuel (CFA)</label>
+      <div class="input-with-button">
+        <button type="button" class="btn btn-light" (click)="decrementPrice()">-</button>
+        <input type="number" [(ngModel)]="form.price" name="price" class="underline-input" required min="1000" step="1000" />
+        <button type="button" class="btn btn-light" (click)="incrementPrice()">+</button>
+      </div>
+      <div class="error" *ngIf="errors['price']">{{ errors['price'] }}</div>
+    </div>
+
+    <!-- Caution -->
+    <div class="form-group full-width">
+      <label>Caution (CFA)</label>
+      <input type="number" [(ngModel)]="form.deposit" name="deposit" class="underline-input" required min="0" step="1000" />
+      <div class="error" *ngIf="errors['deposit']">{{ errors['deposit'] }}</div>
+    </div>
+
+    <!-- Date début -->
+    <div class="form-group">
+      <label>Date début</label>
+      <input type="date" [(ngModel)]="form.startDate" name="startDate" class="underline-input" required />
+      <div class="error" *ngIf="errors['startDate']">{{ errors['startDate'] }}</div>
+    </div>
+
+    <!-- Date fin -->
+    <div class="form-group">
+      <label>Date fin</label>
+      <input type="date" [(ngModel)]="form.endDate" name="endDate" class="underline-input" required />
+      <div class="error" *ngIf="errors['endDate']">{{ errors['endDate'] }}</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions full-width">
+      <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,90 @@
+<div class="page-header d-flex justify-content-between align-items-center">
+  <h4>Appartements</h4>
+  <div class="header-actions">
+    <button class="filter-btn header-btn">
+      <i class="fas fa-filter"></i> Filtres
+    </button>
+    <button class="filter-btn header-btn">
+      <i class="fas fa-sort"></i> Trier
+    </button>
+    <button class="view-btn header-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+      <i class="fas fa-list"></i>
+    </button>
+    <button class="view-btn header-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
+      <i class="fas fa-th-large"></i>
+    </button>
+    <button class="btn btn-primary add-btn header-btn" (click)="goToNew()">+ Nouvel appartement</button>
+  </div>
+</div>
+
+<div class="content-container">
+
+  <!-- Vue liste -->
+  <table class="table apartments-table" *ngIf="viewMode === 'list'">
+    <thead>
+      <tr>
+        <th>Nom de l'appartement</th>
+        <th>Adresse</th>
+        <th>Ville</th>
+        <th>Région</th>
+        <th>Locataire</th>
+        <th>Mensualité</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let apartment of apartments" (click)="goToDetail(apartment)" class="clickable-row">
+        <td>{{ apartment.name }}</td>
+        <td>{{ apartment.address }}</td>
+        <td>{{ apartment.city }}</td>
+        <td>{{ apartment.region }}</td>
+        <td>{{ apartment.tenant || 'Libre' }}</td>
+        <td>
+          <span *ngIf="apartment.mention">{{ apartment.mention | number }} FCFA</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Vue carte -->
+  <div *ngIf="viewMode === 'grid'">
+    <!-- Filtres déplacés dans le header -->
+
+    <div class="apartments-grid">
+  <div class="apartment-card clickable-row" *ngFor="let apartment of apartments" (click)="goToDetail(apartment)">
+        <div class="card-image collage">
+          <ng-container *ngIf="apartment.images && apartment.images.length; else defaultImg">
+            <div class="collage-wrapper">
+              <img *ngFor="let img of apartment.images; let i = index" [src]="img" [alt]="apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : 'Pièce ' + (i+1)" class="collage-img" />
+            </div>
+          </ng-container>
+          <ng-template #defaultImg>
+            <img src="assets/images/gallery-grid/img-grd-gal-1.jpg" alt="Appartement" class="apartment-img" />
+          </ng-template>
+          <span class="card-status" [class.status-occupied]="apartment.tenant" [class.status-free]="!apartment.tenant">
+            {{ apartment.tenant ? 'Occupé' : 'Libre' }}
+          </span>
+        </div>
+        <div class="card-content">
+          <h5 class="card-title">{{ apartment.name }}</h5>
+          <div class="card-address">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ apartment.address }}, {{ apartment.city }} ({{ apartment.region }})</span>
+          </div>
+          <div class="card-details">
+            <div class="detail-item">
+              <i class="fas fa-door-open"></i>
+              <span>{{ apartment.rooms || 'N/A' }} pièces</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="tenant-info" [class.tenant-free]="!apartment.tenant">
+              Locataire: {{ apartment.tenant || 'Libre' }}
+            </div>
+            <div class="card-actions">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,280 @@
+<div class="page-container">
+  <div class="page-header">
+    <button class="btn btn-light back-btn" (click)="back()">
+      <i class="fas fa-arrow-left"></i> Appartements
+    </button>
+    <h4 class="page-title">Détail de l'appartement</h4>
+  </div>
+
+  <!-- Modal de suppression -->
+  <div *ngIf="showDeleteConfirm" class="modal-overlay">
+    <div class="modal-card">
+      <h5>Confirmer la suppression</h5>
+      <p>Voulez-vous vraiment supprimer cet appartement ? Cette action est irréversible.</p>
+      <div class="form-actions center">
+        <button type="button" class="btn btn-light" (click)="showDeleteConfirm = false">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="deleteApartment()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <!-- En-tête avec actions -->
+    <div class="card-header">
+      <h5>Informations de l'appartement</h5>
+      <div class="action-buttons" *ngIf="!editMode">
+        <button class="action-btn edit" (click)="enableEdit()" title="Modifier">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn delete" title="Supprimer l'appartement" (click)="showDeleteConfirm = true">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      <div class="action-buttons" *ngIf="editMode">
+        <button class="action-btn save" type="submit" form="apartmentForm" title="Enregistrer">
+          <i class="fas fa-check"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode édition -->
+    <form *ngIf="editMode" (ngSubmit)="save()" id="apartmentForm" class="apartment-form">
+      <!-- Galerie d'images par pièce -->
+      <div class="form-group full-width image-section">
+  <label class="label">Photos des pièces</label>
+  <div class="apartment-images">
+    <div *ngFor="let img of form.images; let i = index" class="image-wrapper">
+      <div class="image-container">
+        <img [src]="getDisplayImage(img, form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : '')"
+             [alt]="form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Pièce ' + (i+1)"
+             class="apartment-img" />
+        <!-- Affichage en temps réel du nom et description sous l'image -->
+        <div class="image-info-edit">
+          <div class="form-group">
+            <input type="text" id="roomLabel-{{i}}" class="underline-input" [(ngModel)]="form.roomLabels[i]" name="roomLabels[{{i}}]" placeholder="Nom de la pièce (ex: Salon, Chambre...)" />
+            <label for="roomLabel-{{i}}" class="label">Nom de la pièce</label>
+          </div>
+          <div class="form-group">
+            <textarea id="roomDesc-{{i}}" class="underline-input" [(ngModel)]="form.roomDescriptions[i]" name="roomDescriptions[{{i}}]" placeholder="Description de la pièce"></textarea>
+            <label for="roomDesc-{{i}}" class="label">Description</label>
+          </div>
+        </div>
+      </div>
+      <!-- Affichage live sous la card -->
+      <div class="image-live-info">
+        <div class="room-title">{{ form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Nom de la pièce' }}</div>
+        <div class="room-desc">{{ form.roomDescriptions && form.roomDescriptions[i] ? form.roomDescriptions[i] : 'Description...' }}</div>
+      </div>
+    </div>
+    <!-- <div class="image-wrapper add-image">
+      <div class="label-validate-row">
+        <input type="text" [(ngModel)]="newRoomLabel" name="newRoomLabel" placeholder="Nom de la pièce (ex: Salon, Chambre...)" class="room-label-input" (input)="onRoomLabelInput()" />
+        <button type="button" class="icon-btn" [disabled]="!newRoomLabel" (click)="labelValidated = true" title="Valider le label">
+          <i class="fas fa-check"></i>
+        </button>
+      </div> -->
+      <input type="file" [disabled]="!labelValidated" (change)="addRoomImage($event, newRoomLabel); labelValidated = true" class="file-input" accept="image/*" />
+      <label class="file-input-label" [class.disabled]="!labelValidated">
+        <i class="fas fa-plus"></i> Ajouter une photo pour la pièce
+      </label>
+      <div class="error" *ngIf="showRoomLabelError">
+        Veuillez renseigner le nom de la pièce avant de valider.
+      </div>
+    </div>
+  </div>
+      <div class="form-grid">
+        <!-- Nom de l'appartement -->
+        <div class="form-group">
+          <input type="text" id="name" [(ngModel)]="form.name" name="name" class="underline-input" required placeholder="Nom de l'appartement" />
+          <label for="name" class="label">Nom de l'appartement</label>
+          <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
+        </div>
+
+        <!-- Type -->
+        <div class="form-group">
+          <select id="type" [(ngModel)]="form.type" name="type" class="underline-input" required>
+            <option [ngValue]="null">Sélectionner...</option>
+            <option *ngFor="let t of apartmentTypes" [value]="t">{{ t | titlecase }}</option>
+            <option value="autre">Autre...</option>
+          </select>
+          <label for="type" class="label">Type</label>
+          <div class="form-group" *ngIf="form.type === 'autre'">
+            <input type="text" id="customType" [(ngModel)]="form.customType" name="customType" class="underline-input custom-type-input" placeholder="Saisir le type" (blur)="addCustomType()" required />
+            <label for="customType" class="label">Saisir le type</label>
+          </div>
+        </div>
+
+        <!-- Nombre de pièces -->
+        <div class="form-group">
+          <input type="number" id="rooms" [(ngModel)]="form.rooms" name="rooms" class="underline-input" required min="1" placeholder="Nombre de pièces" />
+          <label for="rooms" class="label">Pièces</label>
+          <div class="error" *ngIf="errors.rooms">{{ errors.rooms }}</div>
+        </div>
+
+        <!-- Bâtiment -->
+        <div class="form-group">
+          <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" required>
+            <option [ngValue]="null">Sélectionner un bâtiment...</option>
+            <option *ngFor="let building of buildings" [ngValue]="building.id">
+              {{ building.name }} - {{ building.city }}
+            </option>
+          </select>
+           <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+          <label for="buildingId" class="label">Bâtiment</label>
+          <button type="button" class="btn btn-link" (click)="goToNewBuilding()" title="Ajouter un bâtiment">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+
+        <!-- Locataire -->
+        <div class="form-group">
+          <div class="select-with-action">
+            <select id="tenantId" [(ngModel)]="form.tenantId" name="tenantId" class="underline-input">
+              <option [ngValue]="null">Sélectionner un locataire...</option>
+              <option *ngFor="let tenant of tenants" [ngValue]="tenant.id">{{ tenant.fullName }}</option>
+            </select>
+            <div class="error" *ngIf="errors.tenantId">{{ errors.tenantId }}</div>
+            <label for="tenantId" class="label">Locataire</label>
+            <button type="button" class="btn btn-link" (click)="goToNewTenant()" title="Ajouter un locataire">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mensualité -->
+        <div class="form-group">
+          <div class="input-with-button">
+            <input type="number" [(ngModel)]="form.mention" name="mention" class="underline-input" min="0" />
+            <span class="currency">FCFA</span>
+          </div>
+          <label for="rent" class="label">Mensualité</label>
+        </div>
+      </div>
+    </form>
+
+    <!-- Mode affichage -->
+    <div *ngIf="!editMode" class="view-mode">
+      <!-- Galerie -->
+      <div class="apartment-images full-width image-section">
+        <div *ngIf="apartment && apartment.images && apartment.images.length" class="apartment-images-grid">
+          <div *ngFor="let img of apartment?.images || []; let i = index" class="image-wrapper">
+            <div class="image-container">
+              <img [src]="getDisplayImage(img, (apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : '')"
+                   [alt]="(apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : 'Pièce ' + (i+1)"
+                   class="apartment-img" />
+              <div class="form-group">
+                <label class="label">Nom de la pièce</label>
+                <input type="text" class="underline-input" [value]="apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : ''" readonly />
+              </div>
+              <div class="form-group">
+                <label class="label">Description</label>
+                <textarea class="underline-input" [value]="apartment.roomDescriptions && apartment.roomDescriptions[i] ? apartment.roomDescriptions[i] : ''" readonly></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!(apartment?.images?.length)" class="no-image">
+          <img [src]="getDefaultApartmentImage()" alt="Appartement" class="default-apartment-img" />
+          <p>Aucune photo disponible</p>
+        </div>
+      </div>
+
+      <!-- Infos en grille -->
+      <div class="details-grid">
+        <div class="form-group">
+          <label>Nom de l'appartement</label>
+          <p>{{ apartment?.name || '-' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Type d'appartement</label>
+          <p>{{ apartment?.type || '-' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Nombre de pièces</label>
+          <p>{{ apartment?.rooms || '-' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Bâtiment</label>
+          <p>{{ apartment && apartment.buildingId !== undefined && apartment.buildingId !== null ? buildingName(apartment.buildingId) : 'Non affilié' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Locataire</label>
+          <p>{{ apartment?.tenant || 'Libre' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Mensualité</label>
+          <p>{{ apartment && apartment.mention ? (apartment.mention | number) + ' FCFA' : '-' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <p>{{ apartment?.city || '-' }}</p>
+        </div>
+        <div class="form-group">
+          <label>Région</label>
+          <p>{{ apartment?.region || '-' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section location actuelle -->
+  <div class="form-card" *ngIf="!editMode && currentRental">
+    <div class="card-header">
+      <h5>Location actuelle</h5>
+    </div>
+    
+    <div class="details-grid">
+      <div class="form-group">
+        <label>Locataire</label>
+        <p>{{ currentRental.tenantName || '-' }}</p>
+      </div>
+      <div class="form-group">
+        <label>Date de début</label>
+        <p>{{ currentRental.startDate | date:'dd/MM/yyyy' }}</p>
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <p>{{ currentRental.endDate | date:'dd/MM/yyyy' }}</p>
+      </div>
+      <div class="form-group">
+        <label>Loyer mensuel</label>
+        <p>{{ currentRental.rent | number }} FCFA</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section historique des locations -->
+  <div class="form-card" *ngIf="!editMode && rentalHistory.length > 0">
+    <div class="card-header">
+      <h5>Historique des locations</h5>
+    </div>
+    
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Locataire</th>
+            <th>Période</th>
+            <th>Loyer</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rental of rentalHistory">
+            <td>{{ rental.tenantName }}</td>
+            <td>{{ rental.startDate | date:'dd/MM/yyyy' }} - {{ rental.endDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ rental.rent | number }} FCFA</td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'status-completed': rental.status === 'Terminée',
+                'status-active': rental.status === 'Active'
+              }">
+                {{ rental.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

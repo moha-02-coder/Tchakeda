@@ -1,7 +1,7 @@
 @use '/src/scss/form_imports';
 
-/* Grille du formulaire propriétaire (2x2) */
-.recoverie-grid {
+/* Grille du formulaire propriétaire */
+.owner-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;

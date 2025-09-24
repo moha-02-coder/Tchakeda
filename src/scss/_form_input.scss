@@ -1,0 +1,60 @@
+// Styles réutilisables pour champs de formulaire à label flottant
+
+.form-group {
+  position: relative;
+  margin-bottom: 2rem;
+
+  .underline-input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    background: transparent;
+    padding: 1rem 0 0.5rem 0;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    outline: none;
+    box-shadow: none;
+    color: #222;
+    &::placeholder {
+      color: transparent;
+      transition: color 0.2s;
+    }
+    &:focus {
+      border-bottom-color: #1976d2;
+    }
+    &:focus::placeholder {
+      color: #bbb;
+    }
+  }
+
+  .label {
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    font-size: 1rem;
+    color: #888;
+    pointer-events: none;
+    transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    background: transparent;
+  }
+
+  // Label flottant si input précède le label
+  .underline-input:focus + .label,
+  .underline-input:not(:placeholder-shown) + .label,
+  select.underline-input:focus + .label,
+  select.underline-input:not([value=""]):not([value="null"]) + .label {
+    top: -0.7rem;
+    left: 0;
+    font-size: 0.85rem;
+    color: #1976d2;
+    background: #fff;
+    padding: 0 0.2em;
+  }
+
+  .error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: block;
+  }
+}

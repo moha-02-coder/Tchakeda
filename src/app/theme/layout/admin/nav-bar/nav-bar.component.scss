@@ -1,0 +1,28 @@
+/* Logo size and responsive fix */
+.b-brand {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#main-logo.logo {
+	max-width: 120px;
+	height: auto;
+	object-fit: contain;
+}
+
+.logo-thumb {
+	max-width: 40px;
+	height: auto;
+	object-fit: contain;
+}
+
+@media (max-width: 600px) {
+	#main-logo.logo {
+		max-width: 80px;
+	}
+	.logo-thumb {
+		max-width: 28px;
+	}
+}
+// This file is intentionally left empty to allow customers to add custom CSS if needed.

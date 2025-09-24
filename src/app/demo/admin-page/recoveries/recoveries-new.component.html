@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h4>Créer un recouvrement</h4>
+</div>
+<div class="content-container">
+  <form (ngSubmit)="create()" class="form-card">
+    <div class="form-group">
+      <input type="number" id="rentalId" [(ngModel)]="form.rentalId" name="rentalId" class="underline-input" required placeholder="Location" />
+      <label for="rentalId" class="label">Location</label>
+      <div class="error" *ngIf="errors.rentalId">{{ errors.rentalId }}</div>
+    </div>
+    <div class="form-group">
+      <input type="number" id="amount" [(ngModel)]="form.amount" name="amount" class="underline-input" required min="1" placeholder="Montant" />
+      <label for="amount" class="label">Montant</label>
+      <div class="error" *ngIf="errors.amount">{{ errors.amount }}</div>
+    </div>
+    <div class="form-group">
+      <input type="date" id="date" [(ngModel)]="form.date" name="date" class="underline-input" required placeholder="Date" />
+      <label for="date" class="label">Date</label>
+      <div class="error" *ngIf="errors.date">{{ errors.date }}</div>
+    </div>
+    <div class="form-group">
+      <input type="text" id="status" [(ngModel)]="form.status" name="status" class="underline-input" required placeholder="Statut" />
+      <label for="status" class="label">Statut</label>
+      <div class="error" *ngIf="errors.status">{{ errors.status }}</div>
+    </div>
+    <div class="form-group">
+      <input type="text" id="name" [(ngModel)]="form.status" name="name" class="underline-input" required placeholder="Recouvreur" />
+      <label for="name" class="label">Recouvreur</label>
+      <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </div>
+  </form>
+</div>

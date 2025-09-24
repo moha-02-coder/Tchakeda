@@ -1,0 +1,143 @@
+<div class="page-container">
+  <!-- En-tête avec bouton retour et titre -->
+  <div class="page-header d-flex align-items-center justify-content-between">
+    <button class="btn btn-light back-btn" (click)="back()">
+      <i class="fas fa-arrow-left"></i> Locataires
+    </button>
+    <h4 class="page-title mx-auto" style="margin: 0 auto;">Détails du locataire</h4>
+  </div>
+
+  <!-- Modale de suppression -->
+  <div *ngIf="showDeleteConfirm" class="modal-overlay">
+    <div class="form-card" style="max-width: 400px;">
+      <h5>Confirmer la suppression</h5>
+      <p>Voulez-vous vraiment supprimer ce locataire ? Cette action est irréversible.</p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-light" (click)="showDeleteConfirm = false">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="deleteTenant()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulaire d'édition du locataire -->
+  <form *ngIf="editMode" (ngSubmit)="save()" class="form-card">
+    <!-- Section infos principales -->
+    <div class="info-edit">
+      <h5>Informations du locataire</h5>
+      <div class="action-buttons">
+        <button class="action-btn save" type="submit" title="Enregistrer les modifications">
+          <i class="fas fa-check"></i>
+        </button>
+      </div>
+    </div>
+    <div class="tenant-grid">
+      <!-- Photo d'identité -->
+      <div class="form-group">
+        <div class="tenant-photo-container">
+          <img *ngIf="form.identityImage" [src]="form.identityImage" alt="Photo d'identité" class="tenant-photo" />
+          <div *ngIf="!form.identityImage" class="tenant-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+        <div class="image-upload-container">
+          <input type="file" accept="image/*" (change)="onIdentityImageSelected($event)" style="margin-top: 10px;" />
+          <div class="error" *ngIf="errors.identityImage">{{ errors.identityImage }}</div>
+        </div>
+      </div>
+      <!-- Champs principaux -->
+  <div class="form-group"><input type="text" id="fullName" [(ngModel)]="form.fullName" name="fullName" class="underline-input" required placeholder="Nom complet" /><label for="fullName" class="label">Nom complet</label></div>
+  <div class="form-group"><input type="text" id="country" [(ngModel)]="form.country" name="country" class="underline-input" required placeholder="Pays" /><label for="country" class="label">Pays</label></div>
+  <div class="form-group"><input type="text" id="address" [(ngModel)]="form.address" name="address" class="underline-input" required placeholder="Adresse" /><label for="address" class="label">Adresse</label></div>
+  <div class="form-group"><input type="text" id="phone" [(ngModel)]="form.phone" name="phone" class="underline-input" required placeholder="Téléphone" /><label for="phone" class="label">Téléphone</label></div>
+  <div class="form-group"><input type="email" id="email" [(ngModel)]="form.email" name="email" class="underline-input" placeholder="Email" /><label for="email" class="label">Email</label></div>
+  <div class="form-group"><input type="text" id="profession" [(ngModel)]="form.profession" name="profession" class="underline-input" placeholder="Profession" /><label for="profession" class="label">Profession</label></div>
+    </div>
+    <!-- Section personne affiliée -->
+    <div class="affiliation-section">
+      <h5>Personne affiliée</h5>
+      <div class="tenant-grid">
+        <div class="form-group"><label>Nom complet</label><input type="text" [(ngModel)]="form.affiliatedPerson.fullName" name="affiliatedFullName" class="underline-input" /></div>
+        <div class="form-group"><label>Type de relation</label><input type="text" [(ngModel)]="form.affiliatedPerson.relation" name="affiliatedPersonRelation" class="underline-input" /></div>
+        <div class="form-group"><label>Téléphone</label><input type="text" [(ngModel)]="form.affiliatedPerson.phone" name="affiliatedPhone" class="underline-input" /></div>
+        <div class="form-group"><label>Adresse</label><input type="text" [(ngModel)]="form.affiliatedPerson.address" name="affiliatedAddress" class="underline-input" /></div>
+        <div class="form-group"><label>Email</label><input type="email" [(ngModel)]="form.affiliatedPerson.email" name="affiliatedEmail" class="underline-input" /></div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Affichage lecture du locataire -->
+  <div class="form-card" *ngIf="!editMode">
+    <div class="info-edit">
+      <h5>Informations du locataire</h5>
+      <div class="action-buttons">
+        <button class="action-btn edit" (click)="enableEdit()" title="Modifier les informations"><i class="fas fa-edit"></i></button>
+        <button class="action-btn delete" title="Supprimer le locataire" (click)="showDeleteConfirm = true" style="color: #d32f2f;"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+    <div class="tenant-grid">
+      <!-- Photo d'identité -->
+      <div class="form-group">
+        <div class="tenant-photo-container">
+          <img *ngIf="tenant?.identityImage" [src]="tenant?.identityImage" alt="Photo d'identité" class="tenant-photo" />
+          <div *ngIf="!tenant?.identityImage" class="tenant-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Champs principaux -->
+      <div class="form-group"><label>Nom complet</label><p class="info-value">{{ tenant?.fullName || '-' }}</p></div>
+      <div class="form-group"><label>Pays</label><p class="info-value">{{ tenant?.country || '-' }}</p></div>
+      <div class="form-group"><label>Adresse</label><p class="info-value">{{ tenant?.address || '-' }}</p></div>
+      <div class="form-group"><label>Téléphone</label><p class="info-value">{{ tenant?.phone || '-' }}</p></div>
+      <div class="form-group"><label>Email</label><p class="info-value">{{ tenant?.email || '-' }}</p></div>
+      <div class="form-group"><label>Profession</label><p class="info-value">{{ tenant?.profession || '-' }}</p></div>
+    </div>
+    <!-- Section personne affiliée -->
+    <div class="affiliation-section">
+      <h5>Personne affiliée</h5>
+      <div class="tenant-grid">
+        <div class="form-group"><label>Nom complet</label><p class="info-value">{{ tenant?.affiliatedPerson?.fullName || '-' }}</p></div>
+        <div class="form-group"><label>Type de relation</label><p class="info-value">{{ tenant?.affiliatedPerson?.relation || '-' }}</p></div>
+        <div class="form-group"><label>Téléphone</label><p class="info-value">{{ tenant?.affiliatedPerson?.phone || '-' }}</p></div>
+        <div class="form-group"><label>Adresse</label><p class="info-value">{{ tenant?.affiliatedPerson?.address || '-' }}</p></div>
+        <div class="form-group"><label>Email</label><p class="info-value">{{ tenant?.affiliatedPerson?.email || '-' }}</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table des appartements loués -->
+  <div class="form-card">
+    <h5>Appartements loués</h5>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Appartement</th>
+            <th>Propriétaire</th>
+            <th>Date début</th>
+            <th>Loyer</th>
+            <th>Date fin</th>
+            <th>Montant recouvré</th>
+            <th>Quartier</th>
+            <th>Observations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detail of rentalDetails">
+            <td>{{ detail.apartment?.name || '-' }}</td>
+            <td>{{ detail.owner?.name || '-' }}</td>
+            <td>{{ detail.rental ? (detail.rental.startDate | date:'dd/MM/yyyy') : '-' }}</td>
+            <td>{{ detail.rental && detail.rental.price ? (detail.rental.price | number) + ' FCFA' : '-' }}</td>
+            <td>{{ detail.rental ? (detail.rental.endDate | date:'dd/MM/yyyy') : '-' }}</td>
+            <td>-</td>
+            <td>{{ detail.apartment?.region || '-' }}</td>
+            <td>-</td>
+          </tr>
+          <tr *ngIf="rentalDetails.length === 0">
+            <td colspan="8" style="text-align: center; padding: 20px; color: #999; font-style: italic;">Aucun appartement loué</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

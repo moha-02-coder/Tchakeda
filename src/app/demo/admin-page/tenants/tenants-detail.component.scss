@@ -1,0 +1,343 @@
+@use '/src/scss/form_imports';
+// Variables
+$primary-color: #1976d2;
+$danger-color: #d32f2f;
+$success-color: #388e3c;
+$text-color: #333;
+$text-muted: #999;
+$border-color: #e0e0e0;
+$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+// Styles généraux
+.page-container {
+  padding: 20px;
+  max-width: auto;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.back-btn {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+// Cartes
+.form-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: $card-shadow;
+  padding: 24px;
+  margin: 0 auto 24px auto;
+
+  h5 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+    color: $text-color;
+  }
+}
+
+// Grille locataire
+.tenant-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Groupes de formulaire
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    color: $text-color;
+  }
+}
+
+.info-value {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 15px;
+  color: $text-color;
+  min-height: 20px;
+}
+
+.underline-input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #e0e0e0;
+  outline: none;
+  padding: 8px 0;
+  font-size: 15px;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-bottom-color: $primary-color;
+  }
+}
+
+.error {
+  color: $danger-color;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+// Photo locataire
+.tenant-photo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.tenant-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+}
+
+.tenant-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: $text-muted;
+}
+
+.image-upload-container {
+  text-align: center;
+}
+
+// Section affiliation
+.affiliation-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+
+  h5 {
+    margin-bottom: 16px;
+  }
+}
+
+// Actions
+.info-edit {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+// Boutons d'action
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #edf2f7;
+    transform: scale(1.1);
+  }
+}
+
+.action-btn.edit:hover {
+  color: $primary-color;
+  border-color: $primary-color;
+}
+
+.action-btn.delete:hover {
+  color: $danger-color;
+  border-color: $danger-color;
+}
+
+.action-btn.save:hover {
+  color: $success-color;
+  border-color: $success-color;
+}
+
+.action-btn.cancel:hover {
+  color: $danger-color;
+  border-color: $danger-color;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: $primary-color;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+  }
+}
+
+// Tableau
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+
+  thead {
+    background: #f9f9f9;
+
+    th {
+      font-weight: 600;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #e0e0e0;
+      color: $text-color;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background 0.2s;
+
+      &:hover {
+        background: #fafafa;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+        color: $text-color;
+      }
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+// Modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .page-container {
+    padding: 15px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .form-card {
+    padding: 20px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .info-edit {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    
+    .action-buttons {
+      align-self: flex-end;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tenant-photo,
+  .tenant-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .table {
+    font-size: 12px;
+    
+    th, td {
+      padding: 8px 10px;
+    }
+  }
+}

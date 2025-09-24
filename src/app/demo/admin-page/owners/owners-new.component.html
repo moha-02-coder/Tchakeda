@@ -1,0 +1,61 @@
+<div class="page-header">
+  <h4>Créer un propriétaire</h4>
+</div>
+
+<div class="content-container">
+  <form (ngSubmit)="create()" class="form-card owner-grid">
+
+    <!-- Nom complet -->
+    <div class="form-group">
+      <input type="text" id="fullName" [(ngModel)]="form.fullName" name="fullName" class="underline-input" required placeholder="Nom complet" />
+      <label for="fullName" class="label">Nom complet</label>
+      <div class="error" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+    </div>
+
+    <!-- Pays -->
+    <div class="form-group">
+      <input type="text" id="country" [(ngModel)]="form.country" name="country" class="underline-input" required placeholder="Pays" />
+      <label for="country" class="label">Pays</label>
+      <div class="error" *ngIf="errors.country">{{ errors.country }}</div>
+    </div>
+
+    <!-- Téléphone -->
+    <div class="form-group">
+      <input type="text" id="phone" [(ngModel)]="form.phone" name="phone" class="underline-input" required placeholder="Téléphone" />
+      <label for="phone" class="label">Téléphone</label>
+      <div class="error" *ngIf="errors.phone">{{ errors.phone }}</div>
+    </div>
+
+    <!-- Adresse -->
+    <div class="form-group">
+      <input type="text" id="address" [(ngModel)]="form.adress" name="address" class="underline-input" required placeholder="Adresse" />
+      <label for="address" class="label">Adresse</label>
+      <div class="error" *ngIf="errors.address">{{ errors.address }}</div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <input type="email" id="email" [(ngModel)]="form.email" name="email" class="underline-input" required placeholder="Email" />
+      <label for="email" class="label">Email</label>
+      <div class="error" *ngIf="errors.email">{{ errors.email }}</div>
+    </div>
+
+    <!-- Bâtiment affilié avec bouton d'ajout -->
+    <div class="form-group">
+      <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input">
+        <option [ngValue]="null">Sélectionner...</option>
+        <option *ngFor="let building of buildings" [ngValue]="building.id">{{ building.name }}</option>
+      </select>
+      <label for="buildingId" class="label">Bâtiment affilié</label>
+      <button type="button" class="btn btn-light" (click)="goToNewBuilding()">Nouveau bâtiment</button>
+      <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </div>
+
+  </form>
+</div>

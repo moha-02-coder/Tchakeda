@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { OwnersService } from './owners.service';
 import { BuildingsService } from '../buildings/buildings.service';
+import { MatDialog } from '@angular/material/dialog';
+import { BuildingFormComponent } from '../buildings/components/building-form.component';
 
 @Component({
   selector: 'app-owners-new',
@@ -28,7 +30,8 @@ export class OwnersNewComponent {
   constructor(
     private ownersService: OwnersService,
     private router: Router,
-    private buildingsService: BuildingsService
+    private buildingsService: BuildingsService,
+    private dialog: MatDialog
   ) {
     // Récupération des bâtiments disponibles
     this.buildings = this.buildingsService.getBuildings();
@@ -79,10 +82,18 @@ export class OwnersNewComponent {
     this.router.navigate(['demo/admin-page/owners']);
   }
 
-  // Fonction pour créer un nouveau bâtiment (appelée depuis le bouton)
+  // Fonction pour créer un nouveau bâtiment (ouvre une modale)
   goToNewBuilding() {
-    this.router.navigate(['demo/admin-page/buildings/new'], {
-      queryParams: { returnTo: 'owners-new' }
+    const dialogRef = this.dialog.open(BuildingFormComponent, {
+      width: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Ajoute le nouveau bâtiment à la liste et le sélectionne
+        this.buildings = this.buildingsService.getBuildings();
+        this.form.buildingId = result.id;
+      }
     });
   }
 }

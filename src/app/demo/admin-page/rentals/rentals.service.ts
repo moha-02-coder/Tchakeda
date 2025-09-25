@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { ApartmentsService } from '../apartments/apartments.service';
+import { TenantsService } from '../tenants/tenants.service';
 
 export interface Rental {
   id: number;
@@ -14,6 +16,10 @@ export interface Rental {
 
 @Injectable({ providedIn: 'root' })
 export class RentalsService {
+  constructor(
+    private apartmentsService: ApartmentsService,
+    private tenantsService: TenantsService
+  ) {}
   private storageKey = 'rentals';
 
   /**
@@ -39,10 +45,23 @@ export class RentalsService {
   /**
    * Crée une nouvelle location et la sauvegarde.
    */
-  createRental(rental: Omit<Rental, 'id' | 'createdAt'>): Rental {
+  createRental(rental: Omit<Rental, 'id' | 'createdAt' | 'apartmentName' | 'tenantName'>): Rental {
     const rentals = this.getRentals();
+    // Récupère le nom de l'appartement et du locataire
+    let apartmentName = '';
+    let tenantName = '';
+    if (this.apartmentsService && rental.apartmentId) {
+      const apt = this.apartmentsService.getApartmentById(rental.apartmentId);
+      apartmentName = apt ? apt.name : '';
+    }
+    if (this.tenantsService && rental.tenantId) {
+      const tenant = this.tenantsService.getTenantById(rental.tenantId);
+      tenantName = tenant ? tenant.fullName : '';
+    }
     const newRental: Rental = {
       ...rental,
+      apartmentName,
+      tenantName,
       id: Date.now(),
       createdAt: new Date().toISOString()
     };

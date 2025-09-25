@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { ApartmentsService } from './apartments.service';
 import { BuildingsService } from '../buildings/buildings.service';
 import { RoomImagesService } from './room-images.service';
+import { MatDialog } from '@angular/material/dialog';
+import { BuildingFormComponent } from '../buildings/components/building-form.component';
 
 @Component({
   selector: 'app-apartments-new',
@@ -11,17 +13,41 @@ import { RoomImagesService } from './room-images.service';
   standalone: false
 })
 export class ApartmentsNewComponent {
+  // Pour compatibilité template (ajout d'image pièce)
+  isAddingRoom = false;
+  tempRoomLabel: string = '';
+  newRoomLabel: string = '';
+  newRoomImage: string = '';
+  newRoomDescription: string = '';
+  isSubmitting = false;
+
+  changeRoomImage(i: number) {}
+  removeRoomImage(i: number) {
+    if (this.images && this.images.length > i) {
+      this.images.splice(i, 1);
+      if (this.roomLabels) this.roomLabels.splice(i, 1);
+      if (this.roomDescriptions) this.roomDescriptions.splice(i, 1);
+    }
+  }
+  startAddingRoom() { this.isAddingRoom = true; }
+  cancelAddingRoom() { this.isAddingRoom = false; this.tempRoomLabel = ''; this.newRoomLabel = ''; this.newRoomImage = ''; this.newRoomDescription = ''; }
+  validateNewRoomLabel() {}
+  confirmAddRoom() {}
+  onNewImageSelected(event: any) {}
+  backToNameStep() {}
   apartmentTypes: string[] = ['Studio', 'T2', 'T3', 'T4', 'Duplex', 'Villa', 'Hôtel'];
   isCustomType = false;
   customType = '';
   form = {
-    name: '',
-    type: '',
-    rooms: 1,
-    rent: 0,
-    status: 'Libre',
-    buildingId: 0,
-    roomImages: [] as string[]
+  name: '',
+  type: '',
+  customType: '',
+  rooms: 1,
+  rent: 0,
+  status: 'Libre',
+  buildingId: 0,
+  roomImages: [] as string[],
+  description: ''
   };
   errors: any = {};
   buildings: any[] = [];
@@ -30,7 +56,13 @@ export class ApartmentsNewComponent {
   roomDescriptions: string[] = [];
   availableRoomTypes: Array<{label: string, image: string}> = [];
 
-  constructor(private apartmentsService: ApartmentsService, private router: Router, private buildingsService: BuildingsService, private roomImagesService: RoomImagesService) {
+  constructor(
+    private apartmentsService: ApartmentsService,
+    private router: Router,
+    private buildingsService: BuildingsService,
+    private roomImagesService: RoomImagesService,
+    private dialog: MatDialog
+  ) {
     this.buildings = this.buildingsService.getBuildings();
     this.availableRoomTypes = this.roomImagesService.getAvailableRoomTypes();
     // Sélection automatique du bâtiment créé si présent
@@ -38,7 +70,6 @@ export class ApartmentsNewComponent {
     const newBuildingId = urlParams.get('newBuildingId');
     if (newBuildingId) {
       this.form.buildingId = Number(newBuildingId);
-      // Pré-remplissage des autres champs si transmis
       ['name','address','city','region','roomImages'].forEach(k => {
         const v = urlParams.get(k);
         if (v) (this.form as any)[k] = v;
@@ -46,9 +77,18 @@ export class ApartmentsNewComponent {
     }
   }
 
-  goToNewBuilding() {
-    this.router.navigate(['demo/admin-page/buildings/new'], {
-      queryParams: { returnTo: 'apartments-new' }
+  openBuildingDialog() {
+    const dialogRef = this.dialog.open(BuildingFormComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Ajoute le bâtiment à la liste et sélectionne automatiquement
+        this.buildings.push(result);
+        this.form.buildingId = result.id;
+      }
     });
   }
 
@@ -69,32 +109,22 @@ export class ApartmentsNewComponent {
       reader.onload = (e: any) => {
         if (this.images.length < 6) {
           this.images.push(e.target.result);
-          // Synchronise roomLabels et roomDescriptions
-          this.roomLabels.push('');
-          this.roomDescriptions.push('');
+          // Synchronise roomLabels et roomDescriptions avec le nombre d'images
+          while (this.roomLabels.length < this.images.length) this.roomLabels.push('');
+          while (this.roomDescriptions.length < this.images.length) this.roomDescriptions.push('');
           this.form.roomImages = this.images;
         }
       };
       reader.readAsDataURL(file);
     }
-    // Synchronise la taille des tableaux roomLabels/roomDescriptions
-    while (this.roomLabels.length < this.images.length) this.roomLabels.push('');
-    while (this.roomLabels.length > this.images.length) this.roomLabels.pop();
-    while (this.roomDescriptions.length < this.images.length) this.roomDescriptions.push('');
-    while (this.roomDescriptions.length > this.images.length) this.roomDescriptions.pop();
     event.target.value = '';
   }
 
   removeImage(index: number) {
-  this.images.splice(index, 1);
-  this.roomLabels.splice(index, 1);
-  this.roomDescriptions.splice(index, 1);
-  this.form.roomImages = this.images;
-  // Synchronise la taille des tableaux roomLabels/roomDescriptions
-  while (this.roomLabels.length < this.images.length) this.roomLabels.push('');
-  while (this.roomLabels.length > this.images.length) this.roomLabels.pop();
-  while (this.roomDescriptions.length < this.images.length) this.roomDescriptions.push('');
-  while (this.roomDescriptions.length > this.images.length) this.roomDescriptions.pop();
+    this.images.splice(index, 1);
+    this.roomLabels.splice(index, 1);
+    this.roomDescriptions.splice(index, 1);
+    this.form.roomImages = this.images;
   }
 
   validate() {
@@ -127,8 +157,7 @@ export class ApartmentsNewComponent {
       city: selectedBuilding ? selectedBuilding.city : '',
       region: selectedBuilding ? selectedBuilding.region : '',
       images: this.images.length > 0 ? this.images : [this.roomImagesService.getDefaultApartmentImage()],
-      roomLabels: this.roomLabels.length > 0 ? this.roomLabels : [],
-      roomDescriptions: this.roomDescriptions.length > 0 ? this.roomDescriptions : []
+      roomLabels: this.roomLabels.length > 0 ? this.roomLabels : []
     };
     this.apartmentsService.createApartment(apartmentData);
     this.router.navigate(['demo/admin-page/apartments']);

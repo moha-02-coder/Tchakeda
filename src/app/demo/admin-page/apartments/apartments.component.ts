@@ -20,7 +20,7 @@ export class ApartmentsComponent implements OnInit {
   activeFilter: 'name' | 'city' | 'region' | null = null;
   apartments: Apartment[] = [];
   filteredApartments: Apartment[] = [];
-  viewMode: 'list' | 'grid' = 'list';
+  viewMode: 'list' | 'grid' = 'grid';
   filterName: string = '';
   filterCity: string = '';
   filterRegion: string = '';
@@ -74,6 +74,6 @@ export class ApartmentsComponent implements OnInit {
   }
 
   toggleView() {
-    this.viewMode = this.viewMode === 'list' ? 'grid' : 'list';
+    this.viewMode = this.viewMode === 'list' ? 'grid' : 'grid';
   }
 }

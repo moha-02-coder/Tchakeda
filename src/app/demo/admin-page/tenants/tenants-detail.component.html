@@ -56,11 +56,36 @@
     <div class="affiliation-section">
       <h5>Personne affiliée</h5>
       <div class="tenant-grid">
-        <div class="form-group"><label>Nom complet</label><input type="text" [(ngModel)]="form.affiliatedPerson.fullName" name="affiliatedFullName" class="underline-input" /></div>
-        <div class="form-group"><label>Type de relation</label><input type="text" [(ngModel)]="form.affiliatedPerson.relation" name="affiliatedPersonRelation" class="underline-input" /></div>
-        <div class="form-group"><label>Téléphone</label><input type="text" [(ngModel)]="form.affiliatedPerson.phone" name="affiliatedPhone" class="underline-input" /></div>
-        <div class="form-group"><label>Adresse</label><input type="text" [(ngModel)]="form.affiliatedPerson.address" name="affiliatedAddress" class="underline-input" /></div>
-        <div class="form-group"><label>Email</label><input type="email" [(ngModel)]="form.affiliatedPerson.email" name="affiliatedEmail" class="underline-input" /></div>
+        <div class="form-group">
+          <input type="text" id="affiliatedPersonRelation" [(ngModel)]="form.affiliatedPerson.relation" name="affiliatedPersonRelation" class="underline-input" placeholder="Type de relation" />
+          <label for="affiliatedPersonRelation" class="label">Type de relation <span style="color:red">*</span></label>
+          <div class="error" *ngIf="errors.affiliatedPersonRelation">{{ errors.affiliatedPersonRelation }}</div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="affiliatedPersonFullName" [(ngModel)]="form.affiliatedPerson.fullName" name="affiliatedPersonFullName" class="underline-input" placeholder="Prénom et nom" />
+          <label for="affiliatedPersonFullName" class="label">Prénom et nom <span style="color:red">*</span></label>
+          <div class="error" *ngIf="errors.affiliatedPersonFullName">{{ errors.affiliatedPersonFullName }}</div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="affiliatedPersonPhone" [(ngModel)]="form.affiliatedPerson.phone" name="affiliatedPersonPhone" class="underline-input" placeholder="Téléphone" />
+          <label for="affiliatedPersonPhone" class="label">Téléphone <span style="color:red">*</span></label>
+          <div class="error" *ngIf="errors.affiliatedPersonPhone">{{ errors.affiliatedPersonPhone }}</div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="affiliatedPersonAddress" [(ngModel)]="form.affiliatedPerson.address" name="affiliatedPersonAddress" class="underline-input" placeholder="Adresse" />
+          <label for="affiliatedPersonAddress" class="label">Adresse <span style="color:red">*</span></label>
+          <div class="error" *ngIf="errors.affiliatedPersonAddress">{{ errors.affiliatedPersonAddress }}</div>
+        </div>
+        <div class="form-group">
+          <input type="email" id="affiliatedPersonEmail" [(ngModel)]="form.affiliatedPerson.email" name="affiliatedPersonEmail" class="underline-input" placeholder="E-mail" />
+          <label for="affiliatedPersonEmail" class="label">E-mail</label>
+          <div class="error" *ngIf="errors.affiliatedPersonEmail">{{ errors.affiliatedPersonEmail }}</div>
+        </div>
+        <div class="form-group">
+          <input type="text" id="affiliatedPersonProfession" [(ngModel)]="form.affiliatedPerson.profession" name="affiliatedPersonProfession" class="underline-input" placeholder="Profession" />
+          <label for="affiliatedPersonProfession"class="label">Profession</label>
+          <div class="error" *ngIf="errors.affiliatedPersonProfession">{{ errors.affiliatedPersonProfession }}</div>
+        </div>
       </div>
     </div>
   </form>

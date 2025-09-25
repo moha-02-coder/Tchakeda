@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RentalsService, Rental } from './rentals.service';
+// import { MatDialog } from '@angular/material/dialog';
+// import { RentalFormComponent } from './components/rental-form.component';
 
 @Component({
   selector: 'app-rentals',

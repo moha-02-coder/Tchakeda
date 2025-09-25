@@ -2,16 +2,15 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BuildingsService } from './buildings.service';
 import { OwnersService } from '../owners/owners.service';
+import { MatDialog } from '@angular/material/dialog';
+import { OwnerFormComponent } from '../owners/components/owner-form.component';
 
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-buildings-new',
   templateUrl: './buildings-new.component.html',
   styleUrls: ['./buildings-new.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule]
+  standalone: false
 })
 export class BuildingsNewComponent {
   form: {
@@ -46,7 +45,8 @@ export class BuildingsNewComponent {
   constructor(
     private buildingsService: BuildingsService,
     private ownersService: OwnersService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     this.owners = this.ownersService.getOwners();
     // Sélection automatique du propriétaire créé si présent
@@ -54,12 +54,25 @@ export class BuildingsNewComponent {
     const newOwnerId = urlParams.get('newOwnerId');
     if (newOwnerId) {
       this.form.ownerId = Number(newOwnerId);
-      // Pré-remplissage des autres champs si transmis
       ['fullName','email','phone','country','adress','profession','buildingId'].forEach(k => {
         const v = urlParams.get(k);
         if (v) (this.form as any)[k] = v;
       });
     }
+  }
+
+  openOwnerDialog() {
+    const dialogRef = this.dialog.open(OwnerFormComponent, {
+      width: '600px',
+      disableClose: true,
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.owners.push(result);
+        this.form.ownerId = result.id;
+      }
+    });
   }
 
   onTypeChange(event: any) {

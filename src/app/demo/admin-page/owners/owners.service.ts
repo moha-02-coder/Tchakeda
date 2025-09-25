@@ -16,6 +16,12 @@ export interface Owner {
 
 @Injectable({ providedIn: 'root' })
 export class OwnersService {
+  /**
+   * Ajoute un propriétaire (alias de createOwner pour compatibilité avec les formulaires modaux)
+   */
+  addOwner(owner: Omit<Owner, 'id' | 'registeredAt'>): Owner {
+    return this.createOwner(owner);
+  }
   private storageKey = 'owners';
 
   getOwners(): Owner[] {

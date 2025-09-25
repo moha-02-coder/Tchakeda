@@ -31,6 +31,9 @@
         </button>
       </div>
       <div class="action-buttons" *ngIf="editMode">
+        <button type="button" class="action-btn cancel" (click)="cancelEdit()" title="Annuler">
+          <i class="fas fa-times"></i>
+        </button>
         <button class="action-btn save" type="submit" form="apartmentForm" title="Enregistrer">
           <i class="fas fa-check"></i>
         </button>
@@ -39,58 +42,13 @@
 
     <!-- Mode édition -->
     <form *ngIf="editMode" (ngSubmit)="save()" id="apartmentForm" class="apartment-form">
-      <!-- Galerie d'images par pièce -->
-      <div class="form-group full-width image-section">
-  <label class="label">Photos des pièces</label>
-  <div class="apartment-images">
-    <div *ngFor="let img of form.images; let i = index" class="image-wrapper">
-      <div class="image-container">
-        <img [src]="getDisplayImage(img, form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : '')"
-             [alt]="form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Pièce ' + (i+1)"
-             class="apartment-img" />
-        <!-- Affichage en temps réel du nom et description sous l'image -->
-        <div class="image-info-edit">
-          <div class="form-group">
-            <input type="text" id="roomLabel-{{i}}" class="underline-input" [(ngModel)]="form.roomLabels[i]" name="roomLabels[{{i}}]" placeholder="Nom de la pièce (ex: Salon, Chambre...)" />
-            <label for="roomLabel-{{i}}" class="label">Nom de la pièce</label>
-          </div>
-          <div class="form-group">
-            <textarea id="roomDesc-{{i}}" class="underline-input" [(ngModel)]="form.roomDescriptions[i]" name="roomDescriptions[{{i}}]" placeholder="Description de la pièce"></textarea>
-            <label for="roomDesc-{{i}}" class="label">Description</label>
-          </div>
-        </div>
-      </div>
-      <!-- Affichage live sous la card -->
-      <div class="image-live-info">
-        <div class="room-title">{{ form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Nom de la pièce' }}</div>
-        <div class="room-desc">{{ form.roomDescriptions && form.roomDescriptions[i] ? form.roomDescriptions[i] : 'Description...' }}</div>
-      </div>
-    </div>
-    <!-- <div class="image-wrapper add-image">
-      <div class="label-validate-row">
-        <input type="text" [(ngModel)]="newRoomLabel" name="newRoomLabel" placeholder="Nom de la pièce (ex: Salon, Chambre...)" class="room-label-input" (input)="onRoomLabelInput()" />
-        <button type="button" class="icon-btn" [disabled]="!newRoomLabel" (click)="labelValidated = true" title="Valider le label">
-          <i class="fas fa-check"></i>
-        </button>
-      </div> -->
-      <input type="file" [disabled]="!labelValidated" (change)="addRoomImage($event, newRoomLabel); labelValidated = true" class="file-input" accept="image/*" />
-      <label class="file-input-label" [class.disabled]="!labelValidated">
-        <i class="fas fa-plus"></i> Ajouter une photo pour la pièce
-      </label>
-      <div class="error" *ngIf="showRoomLabelError">
-        Veuillez renseigner le nom de la pièce avant de valider.
-      </div>
-    </div>
-  </div>
       <div class="form-grid">
-        <!-- Nom de l'appartement -->
         <div class="form-group">
           <input type="text" id="name" [(ngModel)]="form.name" name="name" class="underline-input" required placeholder="Nom de l'appartement" />
           <label for="name" class="label">Nom de l'appartement</label>
           <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
         </div>
 
-        <!-- Type -->
         <div class="form-group">
           <select id="type" [(ngModel)]="form.type" name="type" class="underline-input" required>
             <option [ngValue]="null">Sélectionner...</option>
@@ -98,20 +56,22 @@
             <option value="autre">Autre...</option>
           </select>
           <label for="type" class="label">Type</label>
-          <div class="form-group" *ngIf="form.type === 'autre'">
+          <!-- Si le type personnalisé a déjà été renseigné, on l'affiche simplement -->
+          <div class="form-group" *ngIf="form.type === 'autre' && !form.customType">
             <input type="text" id="customType" [(ngModel)]="form.customType" name="customType" class="underline-input custom-type-input" placeholder="Saisir le type" (blur)="addCustomType()" required />
             <label for="customType" class="label">Saisir le type</label>
           </div>
+          <div class="form-group" *ngIf="form.type === 'autre' && form.customType">
+            <span class="custom-type-display">{{ form.customType }}</span>
+          </div>
         </div>
 
-        <!-- Nombre de pièces -->
         <div class="form-group">
           <input type="number" id="rooms" [(ngModel)]="form.rooms" name="rooms" class="underline-input" required min="1" placeholder="Nombre de pièces" />
           <label for="rooms" class="label">Pièces</label>
           <div class="error" *ngIf="errors.rooms">{{ errors.rooms }}</div>
         </div>
 
-        <!-- Bâtiment -->
         <div class="form-group">
           <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" required>
             <option [ngValue]="null">Sélectionner un bâtiment...</option>
@@ -119,14 +79,13 @@
               {{ building.name }} - {{ building.city }}
             </option>
           </select>
-           <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+          <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
           <label for="buildingId" class="label">Bâtiment</label>
           <button type="button" class="btn btn-link" (click)="goToNewBuilding()" title="Ajouter un bâtiment">
             <i class="fas fa-plus"></i>
           </button>
         </div>
 
-        <!-- Locataire -->
         <div class="form-group">
           <div class="select-with-action">
             <select id="tenantId" [(ngModel)]="form.tenantId" name="tenantId" class="underline-input">
@@ -141,7 +100,6 @@
           </div>
         </div>
 
-        <!-- Mensualité -->
         <div class="form-group">
           <div class="input-with-button">
             <input type="number" [(ngModel)]="form.mention" name="mention" class="underline-input" min="0" />
@@ -150,36 +108,118 @@
           <label for="rent" class="label">Mensualité</label>
         </div>
       </div>
-    </form>
-
-    <!-- Mode affichage -->
-    <div *ngIf="!editMode" class="view-mode">
-      <!-- Galerie -->
-      <div class="apartment-images full-width image-section">
-        <div *ngIf="apartment && apartment.images && apartment.images.length" class="apartment-images-grid">
-          <div *ngFor="let img of apartment?.images || []; let i = index" class="image-wrapper">
+      <!-- Galerie d'images par pièce -->
+      <div class="form-group full-width image-section">
+        <label class="label">Photos des pièces</label>
+        <div class="apartment-images">
+          <!-- Images existantes avec possibilité de modification -->
+          <div *ngFor="let img of form.images; let i = index" class="image-wrapper">
             <div class="image-container">
-              <img [src]="getDisplayImage(img, (apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : '')"
-                   [alt]="(apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : 'Pièce ' + (i+1)"
+              <img [src]="getDisplayImage(img, form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : '')"
+                   [alt]="form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Pièce ' + (i+1)"
                    class="apartment-img" />
-              <div class="form-group">
-                <label class="label">Nom de la pièce</label>
-                <input type="text" class="underline-input" [value]="apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : ''" readonly />
+              <!-- Overlay pour changer l'image -->
+              <div class="image-overlay">
+                <button type="button" class="btn-change-image" (click)="changeRoomImage(i)" title="Changer l'image">
+                  <i class="fas fa-camera"></i> Changer
+                </button>
+                <button type="button" class="btn-remove-image" (click)="removeRoomImage(i)" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
               </div>
-              <div class="form-group">
-                <label class="label">Description</label>
-                <textarea class="underline-input" [value]="apartment.roomDescriptions && apartment.roomDescriptions[i] ? apartment.roomDescriptions[i] : ''" readonly></textarea>
+              <!-- Affichage/édition inline -->
+              <ng-container *ngIf="!editPieceIndexMap[i]">
+                <div class="image-live-info">
+                  <div class="room-title">{{ form.roomLabels && form.roomLabels[i] ? form.roomLabels[i] : 'Nom de la pièce' }}</div>
+                  <div class="room-desc">{{ form.roomDescriptions && form.roomDescriptions[i] ? form.roomDescriptions[i] : 'Description...' }}</div>
+                  <button type="button" class="btn btn-link btn-sm" (click)="editPieceIndexMap[i] = true">
+                    <i class="fas fa-edit"></i> Modifier
+                  </button>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="editPieceIndexMap[i]">
+                <div class="image-info-edit">
+                  <div class="form-group">
+                    <input type="text" id="roomLabel-{{i}}" class="underline-input room-label-input" 
+                           [(ngModel)]="form.roomLabels[i]" name="roomLabels[{{i}}]"
+                           placeholder="Nom de la pièce (ex: Salon, Chambre...)" required />
+                    <label for="roomLabel-{{i}}" class="label">Nom de la pièce <span class="required">*</span></label>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="roomDesc-{{i}}" class="underline-input description-input" 
+                              [(ngModel)]="form.roomDescriptions[i]" name="roomDescriptions[{{i}}]"
+                              placeholder="Description de la pièce (ex: Dimensions, équipements...)"
+                              maxlength="200"></textarea>
+                    <label for="roomDesc-{{i}}" class="label">Description</label>
+                    <div class="char-count">{{ (form.roomDescriptions[i] || '').length }}/200</div>
+                  </div>
+                  <div class="add-actions">
+                    <button type="button" class="btn btn-success btn-sm" (click)="savePieceEdit(i)"><i class="fas fa-check"></i> Valider</button>
+                    <button type="button" class="btn btn-light btn-sm" (click)="cancelPieceEdit(i)">Annuler</button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Ajout d'une nouvelle pièce -->
+          <div class="image-wrapper add-image">
+            <div class="add-image-content">
+              <i class="fas fa-plus-circle"></i>
+              <h6>Ajouter une nouvelle pièce</h6>
+              
+              <!-- Étape 1 : Saisir le nom de la pièce -->
+              <div class="add-step" *ngIf="!newRoomLabel">
+                <input type="text" [(ngModel)]="tempRoomLabel" name="tempRoomLabel" 
+                       placeholder="Nom de la pièce (ex: Salon, Chambre...)" 
+                       class="room-label-input" />
+                <button type="button" class="btn btn-primary btn-sm" 
+                        [disabled]="!tempRoomLabel" 
+                        (click)="validateRoomLabel()">
+                  Valider le nom
+                </button>
+              </div>
+              <!-- Étape 2 : Ajouter l'image -->
+              <div class="add-step" *ngIf="newRoomLabel && !newRoomImage">
+                <p><strong>Pièce : {{ newRoomLabel }}</strong></p>
+      <input #newImageInput type="file" (change)="addRoomImage($event, newRoomLabel)" 
+        class="file-input" accept="image/*" style="display: none;" />
+                <button type="button" class="btn btn-outline-primary btn-sm" 
+                        (click)="newImageInput.click()">
+                  <i class="fas fa-upload"></i> Choisir une image
+                </button>
+                <button type="button" class="btn btn-link btn-sm" (click)="cancelAddRoom()">
+                  Annuler
+                </button>
+              </div>
+
+              <!-- Étape 3 : Saisir la description -->
+              <div class="add-step" *ngIf="newRoomLabel && newRoomImage">
+                <p><strong>Pièce : {{ newRoomLabel }}</strong></p>
+                <img [src]="newRoomImage" class="preview-image" alt="Aperçu" />
+                <textarea [(ngModel)]="newRoomDescription" name="newRoomDescription"
+                          placeholder="Description de la pièce..." 
+                          class="description-input" maxlength="200"></textarea>
+                <div class="char-count">{{ (newRoomDescription || '').length }}/200</div>
+                <div class="add-actions">
+                  <button type="button" class="btn btn-success btn-sm" 
+                          (click)="confirmAddRoom()">
+                    <i class="fas fa-check"></i> Ajouter la pièce
+                  </button>
+                  <button type="button" class="btn btn-light btn-sm" (click)="cancelAddRoom()">
+                    Annuler
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div *ngIf="!(apartment?.images?.length)" class="no-image">
-          <img [src]="getDefaultApartmentImage()" alt="Appartement" class="default-apartment-img" />
-          <p>Aucune photo disponible</p>
-        </div>
       </div>
+    </form>
 
-      <!-- Infos en grille -->
+    <!-- Mode affichage -->
+    <div *ngIf="!editMode" class="view-mode">
+      <!-- Reste du mode affichage inchangé -->
       <div class="details-grid">
         <div class="form-group">
           <label>Nom de l'appartement</label>
@@ -213,11 +253,7 @@
           <label>Région</label>
           <p>{{ apartment?.region || '-' }}</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Section location actuelle -->
+    <!-- Sections location actuelle et historique inchangées -->
   <div class="form-card" *ngIf="!editMode && currentRental">
     <div class="card-header">
       <h5>Location actuelle</h5>
@@ -239,6 +275,41 @@
       <div class="form-group">
         <label>Loyer mensuel</label>
         <p>{{ currentRental.rent | number }} FCFA</p>
+      </div>
+         </div>
+    </div>
+  </div>
+        <!-- Galerie améliorée -->
+      <div class="form-group full-width image-section">
+        <div *ngIf="apartment && apartment.images && apartment.images.length" class="apartment-images">
+          <div *ngFor="let img of apartment?.images || []; let i = index" class="image-wrapper">
+            <div class="image-container">
+              <img [src]="getDisplayImage(img, (apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : '')"
+                   [alt]="(apartment && apartment.roomLabels && apartment.roomLabels[i]) ? apartment.roomLabels[i] : 'Pièce ' + (i+1)"
+                   class="apartment-img" />
+              
+              <!-- Info-bulle au survol -->
+              <div class="image-hover-info">
+                <div class="room-title">{{ apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : 'Pièce ' + (i+1) }}</div>
+                <div class="room-desc" *ngIf="apartment.roomDescriptions && apartment.roomDescriptions[i]">
+                  {{ apartment.roomDescriptions[i] }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Info visible en permanence sous l'image -->
+            <!-- <div class="image-permanent-info">
+              <div class="room-title">{{ apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : 'Pièce ' + (i+1) }}</div>
+              <div class="room-desc" *ngIf="apartment.roomDescriptions && apartment.roomDescriptions[i]">
+                {{ apartment.roomDescriptions[i] }}
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div *ngIf="!(apartment?.images?.length)" class="no-image">
+          <img [src]="getDefaultApartmentImage()" alt="Appartement" class="default-apartment-img" />
+          <p>Aucune photo disponible</p>
+        </div>
       </div>
     </div>
   </div>

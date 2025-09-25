@@ -1,10 +1,12 @@
 @use '/src/scss/form_imports';
+
 // Variables
 $primary-color: #1976d2;
 $danger-color: #d32f2f;
 $success-color: #2e7d32;
 $warning-color: #ed6c02;
 $text-color: #333;
+$title-color: #ffffff;
 $text-muted: #666;
 $border-color: #e0e0e0;
 $card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -168,12 +170,12 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 // Labels
-$success-color: #2e7d32;
 .label-validate-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .icon-btn {
   background: $success-color;
   color: #fff;
@@ -184,12 +186,14 @@ $success-color: #2e7d32;
   cursor: pointer;
   transition: background 0.2s;
   box-shadow: 0 2px 6px rgba(46, 125, 50, 0.08);
+  
+  &:disabled {
+    background: #bdbdbd;
+    color: #fff;
+    cursor: not-allowed;
+  }
 }
-.icon-btn:disabled {
-  background: #bdbdbd;
-  color: #fff;
-  cursor: not-allowed;
-}
+
 .room-label-input {
   border: 2px solid #388e3c;
   background: #e8f5e9;
@@ -199,36 +203,62 @@ $success-color: #2e7d32;
   padding: 6px 12px;
   margin-bottom: 8px;
   transition: border-color 0.2s;
-}
-.room-label-input:focus {
-  border-color: #1976d2;
-  background: #fffde7;
-  color: #1976d2;
+  
+  &:focus {
+    border-color: #1976d2;
+    background: #fffde7;
+    color: #1976d2;
+  }
 }
 
-// Images
+// Images - Section améliorée
 .image-section {
   margin-bottom: 30px;
 }
 
 .apartment-images {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-top: 16px;
 }
 
 .image-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 500px;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+  
+  &:hover {
+    box-shadow: $card-hover-shadow;
+    transform: translateY(-2px);
+  }
+  
+  &.add-image {
+    background: #f8f9fa;
+    border: 2px dashed #bdbdbd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    
+    &:hover {
+      border-color: $primary-color;
+      background: #f0f7ff;
+    }
+  }
 }
 
 .image-container {
   position: relative;
   width: 100%;
-  height: 250px;
+  height: 200px;
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
 }
 
 .apartment-img {
@@ -239,69 +269,163 @@ $success-color: #2e7d32;
 }
 
 .image-container:hover .apartment-img {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
+// Overlay pour changer l'image
 .image-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
-  cursor: pointer;
   
-  &:hover {
+  .image-container:hover & {
     opacity: 1;
   }
 }
 
-.image-overlay i {
-  font-size: 32px;
-  margin-bottom: 10px;
+.btn-change-image, .btn-remove-image {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.no-image {
-  text-align: center;
-  padding: 40px;
-  color: $text-muted;
+.btn-change-image {
+  background: $primary-color;
+  
+  &:hover {
+    background: darken($primary-color, 10%);
+  }
+}
+
+.btn-remove-image {
+  background: $danger-color;
+  
+  &:hover {
+    background: darken($danger-color, 10%);
+  }
+}
+
+// Informations d'image
+.image-info-edit {
+  margin-top: 12px;
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+}
+
+.image-live-info, .image-permanent-info {
+  margin-top: 12px;
+  padding: 12px;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 6px;
+  border-left: 3px solid $primary-color;
+}
+
+.room-title {
+  font-weight: 600;
+  color: $title-color;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.room-desc {
+  color: $title-color;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.image-hover-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(17, 61, 93, 0.653);
+  color: white;
+  padding: 12px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  
+  .image-container:hover & {
+    transform: translateY(0);
+  }
+}
+
+// Ajout de nouvelle pièce
+.add-image-content {
+  text-align: center;
   width: 100%;
   
   i {
     font-size: 48px;
-    margin-bottom: 15px;
+    color: #bdbdbd;
+    margin-bottom: 12px;
     display: block;
-    color: #ced4da;
+  }
+  
+  h6 {
+    color: $text-muted;
+    margin-bottom: 20px;
+    font-weight: 600;
   }
 }
 
-.file-input {
-  display: none;
+.add-step {
+  animation: fadeIn 0.3s ease;
 }
 
-.file-input-label {
-  display: block;
-  text-align: center;
-  margin-top: 15px;
-  padding: 8px 15px;
-  background: #f8f9fa;
+.preview-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 12px 0;
+  border: 2px solid $primary-color;
+}
+
+.description-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  resize: vertical;
+  font-size: 14px;
   
-  &:hover {
-    background: #e9ecef;
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
   }
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: $text-muted;
+  margin-top: 4px;
+}
+
+.add-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
 }
 
 // Boutons d'action
@@ -386,6 +510,23 @@ $success-color: #2e7d32;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid;
+  font-size: 14px;
+  
+  &.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  &.btn-outline-primary {
+    background: transparent;
+    border-color: $primary-color;
+    color: $primary-color;
+    
+    &:hover {
+      background: $primary-color;
+      color: white;
+    }
+  }
 }
 
 .btn-light {
@@ -420,48 +561,60 @@ $success-color: #2e7d32;
   }
 }
 
-// Tableaux
-.table-container {
-  overflow-x: auto;
+.btn-success {
+  background: $success-color;
+  border-color: $success-color;
+  color: white;
+
+  &:hover {
+    background: darken($success-color, 10%);
+    border-color: darken($success-color, 10%);
+  }
 }
 
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  
-  thead {
-    background: #f9f9f9;
-    
-    th {
-      font-weight: 600;
-      padding: 12px;
-      text-align: left;
-      border-bottom: 2px solid #e0e0e0;
-      color: $text-color;
-    }
+// Tableaux
+  .table-container {
+    overflow-x: auto;
   }
-  
-  tbody {
-    tr {
-      transition: background 0.2s;
-      
-      &:hover {
-        background: #fafafa;
-      }
-      
-      td {
-        padding: 12px;
-        border-bottom: 1px solid #f0f0f0;
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+
+    thead {
+      background: #f9f9f9;
+
+      th {
+        font-weight: 600;
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 2px solid #e0e0e0;
+        white-space: nowrap;
         color: $text-color;
       }
     }
+
+    tbody {
+      tr {
+        transition: background 0.2s;
+
+        &:hover {
+          background: #fafafa;
+        }
+
+        td {
+          padding: 12px 15px;
+          border-bottom: 1px solid #f0f0f0;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
   }
-  
-  tr:last-child td {
-    border-bottom: none;
-  }
-}
 
 .status-badge {
   display: inline-block;
@@ -517,6 +670,29 @@ $success-color: #2e7d32;
   }
 }
 
+// États vides
+.no-image {
+  text-align: center;
+  padding: 40px;
+  color: $text-muted;
+  background: #f8f9fa;
+  border-radius: 8px;
+  width: 100%;
+  grid-column: 1 / -1;
+  
+  .default-apartment-img {
+    width: 100px;
+    height: 100px;
+    opacity: 0.5;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    margin: 0;
+    font-style: italic;
+  }
+}
+
 // Responsive
 @media (max-width: 768px) {
   .page-container {
@@ -529,6 +705,10 @@ $success-color: #2e7d32;
   
   .form-grid,
   .details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .apartment-images {
     grid-template-columns: 1fr;
   }
   
@@ -567,7 +747,11 @@ $success-color: #2e7d32;
   }
   
   .image-container {
-    height: 200px;
+    height: 180px;
+  }
+  
+  .add-actions {
+    flex-direction: column;
   }
 }
 
@@ -583,6 +767,14 @@ $success-color: #2e7d32;
       padding: 8px 10px;
     }
   }
+  
+  .image-wrapper {
+    padding: 12px;
+  }
+  
+  .image-container {
+    height: 150px;
+  }
 }
 
 // Animations
@@ -591,6 +783,24 @@ $success-color: #2e7d32;
   to { opacity: 1; transform: translateY(0); }
 }
 
-.form-grid, .details-grid {
+.form-grid, .details-grid, .apartment-images {
   animation: fadeIn 0.5s ease-out;
 }
+
+// Utilitaires
+.required {
+  color: $danger-color;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-2 { margin-top: 8px; }
+.mb-2 { margin-bottom: 8px; }
+.mt-3 { margin-top: 12px; }
+.mb-3 { margin-bottom: 12px; }

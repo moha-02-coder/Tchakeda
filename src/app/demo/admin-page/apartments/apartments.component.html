@@ -7,11 +7,11 @@
     <button class="filter-btn header-btn">
       <i class="fas fa-sort"></i> Trier
     </button>
-    <button class="view-btn header-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
-      <i class="fas fa-list"></i>
-    </button>
     <button class="view-btn header-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
       <i class="fas fa-th-large"></i>
+    </button>
+    <button class="view-btn header-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+      <i class="fas fa-list"></i>
     </button>
     <button class="btn btn-primary add-btn header-btn" (click)="goToNew()">+ Nouvel appartement</button>
   </div>

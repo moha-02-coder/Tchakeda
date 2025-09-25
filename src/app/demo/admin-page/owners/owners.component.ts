@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OwnersService, Owner } from './owners.service';
+import { BuildingsService, Building } from '../buildings/buildings.service';
 
 @Component({
   selector: 'app-owners',
@@ -10,11 +11,21 @@ import { OwnersService, Owner } from './owners.service';
 })
 export class OwnersComponent implements OnInit {
   owners: Owner[] = [];
+  buildings: Building[] = [];
 
-  constructor(private ownersService: OwnersService, private router: Router) {}
+  constructor(
+    private ownersService: OwnersService,
+    private buildingsService: BuildingsService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.owners = this.ownersService.getOwners();
+    this.buildings = this.buildingsService.getBuildings();
+  }
+
+  getBuildingCount(ownerId: number): number {
+    return this.buildings.filter(b => b.ownerId === ownerId).length;
   }
 
   goToDetail(owner: Owner) {

@@ -12,6 +12,41 @@ import { RoomImagesService } from './room-images.service';
   standalone: false
 })
 export class ApartmentsDetailComponent implements OnInit {
+  // Map pour savoir quelle pièce est en édition
+  editPieceIndexMap: { [index: number]: boolean } = {};
+
+  // Sauvegarde l'édition d'une pièce (inline)
+  savePieceEdit(i: number) {
+    // Ici, les valeurs sont déjà liées via ngModel, donc rien à faire de plus
+    this.editPieceIndexMap[i] = false;
+  }
+
+  // Annule l'édition d'une pièce (inline)
+  cancelPieceEdit(i: number) {
+    // Optionnel : restaurer les anciennes valeurs si besoin (à implémenter si tu veux un reset)
+    this.editPieceIndexMap[i] = false;
+  }
+  // Pour compatibilité template (ajout d'image pièce)
+  tempRoomLabel: string = '';
+  newRoomImage: string = '';
+  newRoomDescription: string = '';
+
+  changeRoomImage(i: number) {}
+  removeRoomImage(i: number) {
+    if (this.form.images && this.form.images.length > i) {
+      this.form.images.splice(i, 1);
+      if (this.form.roomLabels) this.form.roomLabels.splice(i, 1);
+      if (this.form.roomDescriptions) this.form.roomDescriptions.splice(i, 1);
+    }
+  }
+  validateRoomLabel() {}
+  cancelAddRoom() {
+    this.tempRoomLabel = '';
+    this.newRoomLabel = '';
+    this.newRoomImage = '';
+    this.newRoomDescription = '';
+  }
+  confirmAddRoom() {}
   apartmentTypes: string[] = ['résidentiel', 'commercial', 'mixte'];
   labelValidated: boolean = false;
   showRoomLabelError: boolean = false;

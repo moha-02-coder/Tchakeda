@@ -76,7 +76,7 @@
         <option *ngFor="let owner of owners" [ngValue]="owner.id">{{ owner.fullName }}</option>
       </select>
       <label for="ownerId" class="label">Propriétaire</label>
-      <button type="button" class="btn btn-light" (click)="goToNewOwner()">Nouveau propriétaire</button>
+  <button type="button" class="btn btn-light" (click)="openOwnerDialog()">Nouveau propriétaire</button>
       <div class="error" *ngIf="errors.ownerId">{{ errors.ownerId }}</div>
     </div>
 

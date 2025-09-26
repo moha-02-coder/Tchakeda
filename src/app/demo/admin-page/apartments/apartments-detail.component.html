@@ -73,6 +73,7 @@
         </div>
 
         <div class="form-group">
+          <div class="select-with-action">
           <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" required>
             <option [ngValue]="null">Sélectionner un bâtiment...</option>
             <option *ngFor="let building of buildings" [ngValue]="building.id">
@@ -81,10 +82,11 @@
           </select>
           <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
           <label for="buildingId" class="label">Bâtiment</label>
-          <button type="button" class="btn btn-link" (click)="goToNewBuilding()" title="Ajouter un bâtiment">
+          <button type="button" class="btn btn-link" (click)="openBuildingDialog()" title="Ajouter un bâtiment">
             <i class="fas fa-plus"></i>
           </button>
         </div>
+      </div>
 
         <div class="form-group">
           <div class="select-with-action">
@@ -94,20 +96,23 @@
             </select>
             <div class="error" *ngIf="errors.tenantId">{{ errors.tenantId }}</div>
             <label for="tenantId" class="label">Locataire</label>
-            <button type="button" class="btn btn-link" (click)="goToNewTenant()" title="Ajouter un locataire">
+            <button type="button" class="btn btn-link" (click)="openTenantDialog()" title="Ajouter un locataire">
               <i class="fas fa-plus"></i>
             </button>
           </div>
         </div>
 
-        <div class="form-group">
-          <div class="input-with-button">
-            <input type="number" [(ngModel)]="form.mention" name="mention" class="underline-input" min="0" />
-            <span class="currency">FCFA</span>
-          </div>
-          <label for="rent" class="label">Mensualité</label>
-        </div>
+<!-- Mensualité -->
+    <div class="form-group">
+      <div class="input-with-button">
+        <input type="number" id="rent" [(ngModel)]="form.rent" name="rent" class="underline-input" required min="1000" step="1000" placeholder="Loyer mensuel (CFA)" #rent="ngModel" />
+        <label for="rent" class="label">Loyer mensuel (CFA)</label>
       </div>
+      <div class="error" *ngIf="(rent.invalid && rent.touched) || errors.rent">
+            {{ errors.rent || 'Le loyer est requis' }}
+      </div>
+      </div>
+    </div>
       <!-- Galerie d'images par pièce -->
       <div class="form-group full-width image-section">
         <label class="label">Photos des pièces</label>
@@ -120,7 +125,8 @@
                    class="apartment-img" />
               <!-- Overlay pour changer l'image -->
               <div class="image-overlay">
-                <button type="button" class="btn-change-image" (click)="changeRoomImage(i)" title="Changer l'image">
+                <input type="file" #roomImageInput (change)="onChangeRoomImage($event, i)" accept="image/jpeg,image/png,image/webp" style="display: none;" />
+                <button type="button" class="btn-change-image" (click)="roomImageInput.click()" title="Changer l'image">
                   <i class="fas fa-camera"></i> Changer
                 </button>
                 <button type="button" class="btn-remove-image" (click)="removeRoomImage(i)" title="Supprimer">
@@ -303,6 +309,14 @@
               <div class="room-desc" *ngIf="apartment.roomDescriptions && apartment.roomDescriptions[i]">
                 {{ apartment.roomDescriptions[i] }}
               </div>
+            <div class="add-image-right" *ngIf="newRoomImage">
+              <div class="preview-wrapper">
+                <img [src]="newRoomImage" class="preview-image" alt="Aperçu pièce" />
+                <button type="button" class="btn-remove-preview" (click)="newRoomImage = ''" title="Annuler l'image">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
             </div> -->
           </div>
         </div>

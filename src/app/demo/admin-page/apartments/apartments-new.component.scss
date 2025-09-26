@@ -1,3 +1,4 @@
+// Styles généraux
 @use '/src/scss/form_imports';
 
 // Variables
@@ -10,6 +11,163 @@ $text-muted: #7f8c8d;
 $border-color: #e1e4e8;
 $card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 $card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+// Styles généraux
+.add-image-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 160px;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.add-image-content .btn.btn-outline-primary {
+  font-size: 0.85rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 5px;
+  min-width: 80px;
+  max-width: 180px;
+  margin-top: 0.3rem;
+  margin-bottom: 0.1rem;
+  box-shadow: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-image-content h6 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.add-image-content i.fas.fa-plus-circle {
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+  color: #1976d2;
+  transition: color 0.2s;
+color: #fff !important;
+}
+
+@media (max-width: 600px) {
+  .add-image-content {
+    min-height: 120px;
+    padding: 0.3rem;
+  }
+  .add-image-content .btn.btn-outline-primary {
+    font-size: 0.85rem;
+    min-width: 90px;
+    padding: 0.25rem 0.6rem;
+  }
+  .add-image-content h6 {
+    font-size: 0.95rem;
+  }
+  .add-image-content i.fas.fa-plus-circle {
+    font-size: 1.2rem;
+  }
+}
+
+// Nouvelle disposition pour l'ajout d'image et l'aperçu à droite
+.add-image-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+}
+.add-image-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.add-image-right {
+  position: absolute;
+  right: -320px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  align-items: stretch;
+  justify-content: start;
+  z-index: 2;
+}
+.preview-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.preview-image {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 12px 0px;
+  border: 2px solid #3498db;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.btn-remove-preview {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #d32f2f;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+  transition: background 0.2s;
+}
+.btn-remove-preview:hover {
+  background: #ffeaea;
+}
+.preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.preview-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #1976d2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.btn-remove-preview {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #d32f2f;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+  transition: background 0.2s;
+}
+.btn-remove-preview:hover {
+  background: #ffeaea;
+}
 
 // Styles généraux
 .page-container {
@@ -363,42 +521,103 @@ $card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   font-size: 12px;
 }
 
+// ============================
 // Statut
-.status-display {
+// ============================
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // meilleure répartition
+  flex-wrap: wrap; // évite que ça déborde sur petits écrans
+  gap: 16px;
   margin-top: 8px;
+  padding: 8px 0;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
+.statut-label {
+  min-width: 70px;
+  margin-bottom: 0;
+  font-size: 15px;
+  color: $text-color;
+  font-weight: 600;
+}
+
+.status-flex-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 0.5rem;
+  margin-top: 8px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.status-flex-group button {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
   font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  padding: 8px 14px;
 }
 
-.status-available {
-  background: rgba($success-color, 0.1);
-  color: $success-color;
+.statut-label {
+  min-width: 60px;
+  margin-bottom: 0;
+  font-size: 15px;
+  color: $text-color;
+  font-weight: 500;
+// Fin du bloc précédent
+
+  &.status-occupied {
+    background: rgba($warning-color, 0.1);
+    color: $warning-color;
+    border: 1px solid rgba($warning-color, 0.3);
+  }
 }
 
-.status-occupied {
-  background: rgba($warning-color, 0.1);
-  color: $warning-color;
+// ============================
+// Actions locataires
+// ============================
+.tenant-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .tenant-select {
+    min-width: 200px;
+  }
 }
 
+.remove-tenant-btn {
+  margin-left: auto; // pousse à droite si besoin
+}
+
+// ============================
 // Input avec devise
+// ============================
 .input-with-currency {
   position: relative;
-  
+  display: flex;
+  align-items: center;
+
+  input {
+    padding-right: 50px; // espace réservé pour la devise
+  }
+
   .currency {
     position: absolute;
-    right: 0;
+    right: 10px;
     bottom: 8px;
     color: $text-muted;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    pointer-events: none;
   }
 }
+
 
 // Résumé de création
 .creation-summary {
@@ -459,101 +678,6 @@ $card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     margin: 0;
     font-weight: 500;
   }
-}
-
-// Actions de formulaire
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #e9ecef;
-  
-  &.full-width {
-    grid-column: 1 / -1;
-  }
-}
-
-.btn {
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border: 1px solid;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    
-    &:hover {
-      transform: none;
-    }
-  }
-  
-  &.btn-sm {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-  
-  &.btn-outline-primary {
-    background: transparent;
-    border-color: $primary-color;
-    color: $primary-color;
-    
-    &:hover {
-      background: $primary-color;
-      color: white;
-    }
-  }
-}
-
-.btn-light {
-  background: #f8f9fa;
-  border-color: #ddd;
-  color: $text-color;
-  
-  &:hover {
-    background: #e9ecef;
-  }
-}
-
-.btn-primary {
-  background: $primary-color;
-  border-color: $primary-color;
-  color: white;
-  
-  &:hover {
-    background: darken($primary-color, 10%);
-    border-color: darken($primary-color, 10%);
-    transform: translateY(-2px);
-  }
-}
-
-.btn-success {
-  background: $success-color;
-  border-color: $success-color;
-  color: white;
-  
-  &:hover {
-    background: darken($success-color, 10%);
-    border-color: darken($success-color, 10%);
-  }
-}
-
-// Messages d'erreur
-.error {
-  color: $danger-color;
-  font-size: 0.85rem;
-  margin-top: 5px;
-}
-
-.required {
-  color: $danger-color;
-  font-weight: 600;
 }
 
 // Responsive

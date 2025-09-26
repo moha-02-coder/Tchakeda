@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="page-header">
+    <h4 class="page-title">Nouveau recouvreur</h4>
+  </div>
+  <div class="content-container">
+    <form (ngSubmit)="create()" class="form-card collector-grid">
+      <div class="form-group">
+        <input type="text" [(ngModel)]="form.fullName" name="fullName" class="underline-input" required placeholder="Nom complet" />
+        <label for="fullName" class="label">Nom complet</label>
+        <div class="error" *ngIf="errors.fullName">{{ errors.fullName }}</div>
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="form.country" name="country" class="underline-input" required placeholder="Pays" />
+        <label for="country" class="label">Pays</label>
+        <div class="error" *ngIf="errors.country">{{ errors.country }}</div>
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="form.address" name="address" class="underline-input" required placeholder="Adresse" />
+        <label for="address" class="label">Adresse</label>
+        <div class="error" *ngIf="errors.address">{{ errors.address }}</div>
+      </div>
+      <div class="form-group">
+        <select [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" required (change)="onBuildingChange()">
+          <option value="" disabled selected>Choisir un bâtiment</option>
+          <option *ngFor="let b of buildings" [value]="b.id">{{ b.name }}</option>
+        </select>
+        <label for="buildingId" class="label">Bâtiment</label>
+        <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+      </div>
+      <div class="form-group" *ngIf="form.buildingId">
+        <select multiple [(ngModel)]="form.apartmentIds" name="apartmentIds" class="underline-input" required>
+          <option *ngFor="let apt of filteredApartments" [value]="apt.id">{{ apt.name }}</option>
+        </select>
+        <label for="apartmentIds" class="label">Propriétés à recouvrer</label>
+        <div class="error" *ngIf="errors.apartmentId">{{ errors.apartmentIds }}</div>
+      </div>
+      <div class="form-group">
+        <input type="text" [(ngModel)]="form.phone" name="phone" class="underline-input" required placeholder="Téléphone" />
+        <label for="phone" class="label">Téléphone</label>
+        <div class="error" *ngIf="errors.phone">{{ errors.phone }}</div>
+      </div>
+      <div class="form-group">
+        <input type="email" [(ngModel)]="form.email" name="email" class="underline-input" required placeholder="Email" />
+        <label for="email" class="label">Email</label>
+        <div class="error" *ngIf="errors.email">{{ errors.email }}</div>
+      </div>
+      <div class="form-actions d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Création...' : 'Créer le recouvreur' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -13,7 +13,7 @@
     <button class="view-btn header-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
       <i class="fas fa-list"></i>
     </button>
-    <button class="btn btn-primary add-btn header-btn" (click)="goToNew()">+ Nouvel appartement</button>
+    <button class="btn btn-primary add-btn header-btn" (click)="goToNew()"><i class="fas fa-plus"></i> Nouvel appartement</button>
   </div>
 </div>
 
@@ -53,8 +53,13 @@
   <div class="apartment-card clickable-row" *ngFor="let apartment of apartments" (click)="goToDetail(apartment)">
         <div class="card-image collage">
           <ng-container *ngIf="apartment.images && apartment.images.length; else defaultImg">
-            <div class="collage-wrapper">
-              <img *ngFor="let img of apartment.images; let i = index" [src]="img" [alt]="apartment.roomLabels && apartment.roomLabels[i] ? apartment.roomLabels[i] : 'Pièce ' + (i+1)" class="collage-img" />
+            <div class="carousel-wrapper">
+              <button type="button" class="carousel-arrow left" (click)="$event.stopPropagation(); apartment._carouselIndex = (apartment._carouselIndex > 0 ? apartment._carouselIndex - 1 : apartment.images.length - 1)"><i class="fas fa-chevron-left"></i></button>
+              <img [src]="apartment.images[apartment._carouselIndex || 0]"
+                   [alt]="apartment.roomLabels && apartment.roomLabels[apartment._carouselIndex || 0] ? apartment.roomLabels[apartment._carouselIndex || 0] : 'Pièce ' + ((apartment._carouselIndex || 0)+1)"
+                   class="collage-img" />
+              <button type="button" class="carousel-arrow right" (click)="$event.stopPropagation(); apartment._carouselIndex = (apartment._carouselIndex < apartment.images.length - 1 ? (apartment._carouselIndex || 0) + 1 : 0)"><i class="fas fa-chevron-right"></i></button>
+              <div class="carousel-indicator">{{ (apartment._carouselIndex || 0) + 1 }}/{{ apartment.images.length }}</div>
             </div>
           </ng-container>
           <ng-template #defaultImg>

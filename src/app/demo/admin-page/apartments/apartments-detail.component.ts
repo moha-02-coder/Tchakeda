@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { BuildingFormComponent } from '../buildings/components/building-form.component';
+import { TenantFormComponent } from '../tenants/components/tenant-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApartmentsService, Apartment } from './apartments.service';
 import { BuildingsService } from '../buildings/buildings.service';
@@ -31,7 +34,23 @@ export class ApartmentsDetailComponent implements OnInit {
   newRoomImage: string = '';
   newRoomDescription: string = '';
 
-  changeRoomImage(i: number) {}
+  // Remplacement d'image pour une pièce existante
+  onChangeRoomImage(event: any, i: number) {
+    const files: FileList = event.target.files;
+    if (!files || !files.length) return;
+    const file = files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) return;
+    if (file.size > 2 * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      if (this.form.images && this.form.images.length > i) {
+        this.form.images[i] = e.target.result;
+      }
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
   removeRoomImage(i: number) {
     if (this.form.images && this.form.images.length > i) {
       this.form.images.splice(i, 1);
@@ -46,7 +65,21 @@ export class ApartmentsDetailComponent implements OnInit {
     this.newRoomImage = '';
     this.newRoomDescription = '';
   }
-  confirmAddRoom() {}
+  confirmAddRoom() {
+    if (this.newRoomLabel && this.newRoomImage) {
+      if (!this.form.images) this.form.images = [];
+      if (!this.form.roomLabels) this.form.roomLabels = [];
+      if (!this.form.roomDescriptions) this.form.roomDescriptions = [];
+      this.form.images.push(this.newRoomImage);
+      this.form.roomLabels.push(this.newRoomLabel);
+      this.form.roomDescriptions.push(this.newRoomDescription || '');
+      // Reset champs temporaires
+      this.newRoomLabel = '';
+      this.newRoomImage = '';
+      this.newRoomDescription = '';
+      this.tempRoomLabel = '';
+    }
+  }
   apartmentTypes: string[] = ['résidentiel', 'commercial', 'mixte'];
   labelValidated: boolean = false;
   showRoomLabelError: boolean = false;
@@ -165,9 +198,10 @@ export class ApartmentsDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private apartmentsService: ApartmentsService,
-  private buildingsService: BuildingsService,
-  private tenantsService: TenantsService,
-  private roomImagesService: RoomImagesService
+    private buildingsService: BuildingsService,
+    private tenantsService: TenantsService,
+    private roomImagesService: RoomImagesService,
+    private dialog: MatDialog
   ) {
     this.buildings = this.buildingsService.getBuildings();
     this.tenants = this.tenantsService.getTenants ? this.tenantsService.getTenants() : [];
@@ -270,6 +304,33 @@ export class ApartmentsDetailComponent implements OnInit {
         this.apartmentTypes.push(custom);
       }
     }
+  }
+
+  // Ouvre un modal pour ajouter un bâtiment (à implémenter selon ta lib de modale)
+  openBuildingDialog() {
+    const dialogRef = this.dialog.open(BuildingFormComponent, {
+      width: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.buildings = this.buildingsService.getBuildings();
+        this.form.buildingId = result.id;
+      }
+    });
+  }
+
+  openTenantDialog() {
+    const dialogRef = this.dialog.open(TenantFormComponent, {
+      width: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tenants = this.tenantsService.getTenants();
+        this.form.tenantId = result.id;
+      }
+    });
   }
 
   back() {

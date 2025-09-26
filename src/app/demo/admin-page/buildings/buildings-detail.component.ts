@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BuildingsService, Building } from './buildings.service';
+import { ApartmentsService } from '../apartments/apartments.service';
 import { OwnersService, Owner } from '../owners/owners.service';
 
 @Component({
@@ -53,7 +54,8 @@ export class BuildingsDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private buildingsService: BuildingsService,
-    private ownersService: OwnersService
+    private ownersService: OwnersService,
+    private apartmentsService: ApartmentsService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +65,12 @@ export class BuildingsDetailComponent implements OnInit {
     if (this.building) {
       this.form = { ...this.building };
       this.isCustomType = this.form.type === 'autre';
+  // Récupérer les appartements liés à ce bâtiment via ApartmentsService
+  const allApartments = this.apartmentsService.getApartments();
+  this.buildingApartments = allApartments.filter((a: any) => a.buildingId === this.building?.id);
+  this.occupiedApartmentsCount = this.buildingApartments.filter(a => a.tenant).length;
+  this.freeApartmentsCount = this.buildingApartments.filter(a => !a.tenant).length;
+  this.occupancyRate = this.buildingApartments.length > 0 ? Math.round((this.occupiedApartmentsCount / this.buildingApartments.length) * 100) : 0;
     }
   }
 

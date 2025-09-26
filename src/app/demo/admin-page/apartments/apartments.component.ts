@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApartmentsService, Apartment } from './apartments.service';
 
+interface ApartmentWithCarousel extends Apartment {
+  _carouselIndex: number;
+}
+
 @Component({
   selector: 'app-apartments',
   templateUrl: './apartments.component.html',
@@ -9,7 +13,7 @@ import { ApartmentsService, Apartment } from './apartments.service';
   standalone: false
 })
 export class ApartmentsComponent implements OnInit {
-  getRoomImages(apartment: Apartment): string[] {
+  getRoomImages(apartment: ApartmentWithCarousel): string[] {
     return apartment.images || [];
   }
   sortOrder: 'recent' | 'oldest' = 'recent';
@@ -18,8 +22,8 @@ export class ApartmentsComponent implements OnInit {
   filterStatus: 'all' | 'occupied' | 'free' = 'all';
   filterMention: 'all' | 'high' | 'low' = 'all';
   activeFilter: 'name' | 'city' | 'region' | null = null;
-  apartments: Apartment[] = [];
-  filteredApartments: Apartment[] = [];
+  apartments: ApartmentWithCarousel[] = [];
+  filteredApartments: ApartmentWithCarousel[] = [];
   viewMode: 'list' | 'grid' = 'grid';
   filterName: string = '';
   filterCity: string = '';
@@ -31,7 +35,7 @@ export class ApartmentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.apartments = this.apartmentsService.getApartments();
+    this.apartments = this.apartmentsService.getApartments().map(a => ({ ...a, _carouselIndex: 0 }));
     this.applyFilters();
   }
 

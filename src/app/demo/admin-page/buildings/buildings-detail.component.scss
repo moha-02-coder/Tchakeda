@@ -123,6 +123,19 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 
+// Espacement pour les infos personnelles en mode lecture
+.info-row {
+  margin-bottom: 18px;
+  font-size: 1.08rem;
+  display: flex;
+  align-items: center;
+}
+.info-row .label {
+  margin-left: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
 .stat-card {
   background: white;
   border-radius: 8px;

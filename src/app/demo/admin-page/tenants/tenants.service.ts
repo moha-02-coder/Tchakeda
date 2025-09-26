@@ -56,18 +56,12 @@ export class TenantsService {
   }
 
   updateTenant(updated: Tenant): void {
-    // Accept and persist image changes
+    // Accept and persist ALL changes
     const tenants = this.getTenants().map(t => {
       if (t.id === updated.id) {
         return {
           ...t,
-          identityImage: updated.identityImage,
-          profileImage: updated.profileImage,
-          fullName: updated.fullName,
-          email: updated.email,
-          phone: updated.phone,
-          city: updated.city,
-          // ...add other fields as needed
+          ...updated
         };
       }
       return t;

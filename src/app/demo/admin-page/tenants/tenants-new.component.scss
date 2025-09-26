@@ -1,5 +1,12 @@
 @use '/src/scss/form_imports';
-
+// Variables
+$primary-color: #1976d2;
+$danger-color: #d32f2f;
+$success-color: #388e3c;
+$text-color: #333;
+$text-muted: #999;
+$border-color: #e0e0e0;
+$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 .tenant-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -18,7 +18,7 @@
           <div class="error" *ngIf="errors.fullName">{{ errors.fullName }}</div>
         </div>
         <div class="form-group">
-          <input type="text" id="country" [(ngModel)]="form.country" name="country" class="underline-input" required placeholder="Pays" />
+          <input type="text" id="country" [(ngModel)]="form.country" name="country" class="underline-input" required placeholder="Pays" autocomplete="off" />
           <label for="country" class="label">Pays <span style="color:red">*</span></label>
           <div class="error" *ngIf="errors.country">{{ errors.country }}</div>
         </div>
@@ -38,7 +38,7 @@
           <div class="error" *ngIf="errors.email">{{ errors.email }}</div>
         </div>
         <div class="form-group">
-          <input type="text" id="profession" [(ngModel)]="form.profession" name="profession" class="underline-input" placeholder="Profession" />
+          <input type="text" id="profession" [(ngModel)]="form.profession" name="profession" class="underline-input" placeholder="Profession" autocomplete="off" />
           <label for="profession" class="label">Profession</label>
         </div>
       </div>
@@ -129,6 +129,20 @@
     </div>
   </section>
 
+    <!-- Sélection du bâtiment puis des appartements à louer -->
+    <div class="form-group">
+      <label for="buildingId" class="label">Bâtiment</label>
+      <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" (change)="onBuildingChange()">
+        <option value="" disabled selected>Choisir un bâtiment</option>
+        <option *ngFor="let b of buildings" [value]="b.id">{{ b.name }}</option>
+      </select>
+    </div>
+    <div class="form-group" *ngIf="form.buildingId">
+      <label for="apartments" class="label">Appartements à louer (optionnel)</label>
+      <select id="apartments" [(ngModel)]="form.apartments" name="apartments" class="underline-input" multiple>
+        <option *ngFor="let apt of filteredApartments" [value]="apt.id">{{ apt.name }} - {{ apt.address }}</option>
+      </select>
+    </div>
     <!-- Actions -->
     <div class="form-actions">
       <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>

@@ -1,3 +1,5 @@
+
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApartmentsService } from './apartments.service';
@@ -5,6 +7,8 @@ import { BuildingsService } from '../buildings/buildings.service';
 import { RoomImagesService } from './room-images.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BuildingFormComponent } from '../buildings/components/building-form.component';
+import { TenantFormComponent } from '../tenants/components/tenant-form.component';
+import { TenantsService, Tenant } from '../tenants/tenants.service';
 
 @Component({
   selector: 'app-apartments-new',
@@ -13,6 +17,57 @@ import { BuildingFormComponent } from '../buildings/components/building-form.com
   standalone: false
 })
 export class ApartmentsNewComponent {
+  pendingImages: Array<{ dataUrl: string, label: string, description: string }> = [];
+  // Sélection multiple d'images
+  onNewImagesSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (!files || !files.length) return;
+    const maxToAdd = this.form.rooms - this.images.length - this.pendingImages.length;
+    if (maxToAdd <= 0) {
+      this.errors.roomImages = `Nombre maximum de pièces (${this.form.rooms}) atteint.`;
+      event.target.value = '';
+      return;
+    }
+    let added = 0;
+    Array.from(files).forEach(file => {
+      if (added >= maxToAdd) return;
+      if (file.size > 2 * 1024 * 1024) return; // 2MB max
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.pendingImages.push({ dataUrl: e.target.result, label: '', description: '' });
+      };
+      reader.readAsDataURL(file);
+      added++;
+    });
+    if (added < files.length) {
+      this.errors.roomImages = `Seules ${maxToAdd} images peuvent être ajoutées.`;
+    } else {
+      this.errors.roomImages = '';
+    }
+    event.target.value = '';
+  }
+
+  // Retirer une image de la file d'attente
+  removePendingImage(idx: number) {
+    this.pendingImages.splice(idx, 1);
+  }
+
+  // Valider l'ajout d'une image avec nom et description
+  confirmPendingImage(idx: number) {
+    const img = this.pendingImages[idx];
+    if (img && img.label) {
+      this.images.push(img.dataUrl);
+      this.roomLabels.push(img.label);
+      this.roomDescriptions.push(img.description || '');
+      this.pendingImages.splice(idx, 1);
+    }
+  }
+  errors: any = {};
+  buildings: any[] = [];
+  images: string[] = [];
+  roomLabels: string[] = [];
+  roomDescriptions: string[] = [];
+  availableRoomTypes: Array<{label: string, image: string}> = [];
   // Pour compatibilité template (ajout d'image pièce)
   isAddingRoom = false;
   tempRoomLabel: string = '';
@@ -32,39 +87,61 @@ export class ApartmentsNewComponent {
   startAddingRoom() { this.isAddingRoom = true; }
   cancelAddingRoom() { this.isAddingRoom = false; this.tempRoomLabel = ''; this.newRoomLabel = ''; this.newRoomImage = ''; this.newRoomDescription = ''; }
   validateNewRoomLabel() {}
-  confirmAddRoom() {}
-  onNewImageSelected(event: any) {}
+  confirmAddRoom() {
+    if (this.newRoomLabel && this.newRoomImage) {
+      this.images.push(this.newRoomImage);
+      this.roomLabels.push(this.newRoomLabel);
+      this.roomDescriptions.push(this.newRoomDescription || '');
+      // Reset champs temporaires
+      this.newRoomLabel = '';
+      this.newRoomImage = '';
+      this.newRoomDescription = '';
+      this.tempRoomLabel = '';
+      this.isAddingRoom = false;
+    }
+  }
+  onNewImageSelected(event: any) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.newRoomImage = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    // Reset input value to allow re-selection of same file
+    event.target.value = '';
+  }
   backToNameStep() {}
   apartmentTypes: string[] = ['Studio', 'T2', 'T3', 'T4', 'Duplex', 'Villa', 'Hôtel'];
   isCustomType = false;
   customType = '';
   form = {
-  name: '',
-  type: '',
-  customType: '',
-  rooms: 1,
-  rent: 0,
-  status: 'Libre',
-  buildingId: 0,
-  roomImages: [] as string[],
-  description: ''
+    name: '',
+    type: '',
+    customType: '',
+    rooms: 1,
+    rent: 0,
+    status: 'Libre',
+    buildingId: 0,
+    roomImages: [] as string[],
+    description: '',
+    tenantId: null as number | null
   };
-  errors: any = {};
-  buildings: any[] = [];
-  images: string[] = [];
-  roomLabels: string[] = [];
-  roomDescriptions: string[] = [];
-  availableRoomTypes: Array<{label: string, image: string}> = [];
+
+  tenants: Tenant[] = [];
+  selectedTenant: Tenant | null = null;
 
   constructor(
     private apartmentsService: ApartmentsService,
     private router: Router,
     private buildingsService: BuildingsService,
     private roomImagesService: RoomImagesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private tenantsService: TenantsService
   ) {
     this.buildings = this.buildingsService.getBuildings();
     this.availableRoomTypes = this.roomImagesService.getAvailableRoomTypes();
+    this.tenants = this.tenantsService.getTenants();
     // Sélection automatique du bâtiment créé si présent
     const urlParams = new URLSearchParams(window.location.search);
     const newBuildingId = urlParams.get('newBuildingId');
@@ -75,7 +152,47 @@ export class ApartmentsNewComponent {
         if (v) (this.form as any)[k] = v;
       });
     }
+    // Si un locataire est déjà sélectionné (édition)
+    if (this.form.tenantId) {
+      this.selectedTenant = this.tenants.find(t => t.id === this.form.tenantId) || null;
+    }
   }
+
+  removeImage(index: number) {
+    this.images.splice(index, 1);
+    this.roomLabels.splice(index, 1);
+    this.roomDescriptions.splice(index, 1);
+    this.form.roomImages = this.images;
+  }
+
+  onTenantSelected(event: any) {
+    const tenantId = +event.target.value;
+    this.selectedTenant = this.tenants.find(t => t.id === tenantId) || null;
+    this.form.tenantId = this.selectedTenant ? tenantId : null;
+    this.form.status = this.selectedTenant ? 'Occupé' : 'Libre';
+  }
+
+  openTenantDialog() {
+    const dialogRef = this.dialog.open(TenantFormComponent, {
+      width: '500px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tenants.push(result);
+        this.selectedTenant = result;
+        this.form.tenantId = result.id;
+        this.form.status = 'Occupé';
+      }
+    });
+  }
+
+  removeTenant() {
+    this.selectedTenant = null;
+    this.form.tenantId = null;
+    this.form.status = 'Libre';
+  }
+  // Suppression du constructeur et des champs dupliqués : tout est géré dans le constructeur principal ci-dessus
 
   openBuildingDialog() {
     const dialogRef = this.dialog.open(BuildingFormComponent, {
@@ -118,13 +235,6 @@ export class ApartmentsNewComponent {
       reader.readAsDataURL(file);
     }
     event.target.value = '';
-  }
-
-  removeImage(index: number) {
-    this.images.splice(index, 1);
-    this.roomLabels.splice(index, 1);
-    this.roomDescriptions.splice(index, 1);
-    this.form.roomImages = this.images;
   }
 
   validate() {

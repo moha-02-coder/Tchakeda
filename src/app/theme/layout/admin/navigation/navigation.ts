@@ -100,10 +100,10 @@ export const NavigationItems: NavigationItem[] = [
         children: [
           {
             id: 'recoveries-list',
-            title: 'Liste des recouvrements',
+            title: 'Liste des recouvreurs',
             type: 'item',
             icon: 'feather icon-list',
-            url: '/demo/admin-page/recoveries',
+            url: '/demo/admin-page/collectors',
             classes: 'nav-child-icon'
           },
           {

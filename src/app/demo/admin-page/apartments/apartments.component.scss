@@ -138,6 +138,56 @@ $card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 }
 
+/* Carrousel d'images dans la carte appartement */
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 180px;
+}
+.collage-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.8);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.carousel-arrow.left {
+  left: 8px;
+}
+.carousel-arrow.right {
+  right: 8px;
+}
+.carousel-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  z-index: 2;
+}
+
 .card-checkbox {
   position: absolute;
   top: 15px;

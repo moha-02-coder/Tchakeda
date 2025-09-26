@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TenantsService } from './tenants.service';
+import { ApartmentsService, Apartment } from '../apartments/apartments.service';
+import { BuildingsService, Building } from '../buildings/buildings.service';
 
 @Component({
   selector: 'app-tenants-new',
@@ -9,8 +11,12 @@ import { TenantsService } from './tenants.service';
   standalone: false
 })
 export class TenantsNewComponent {
+  buildings: Building[] = [];
+  availableApartments: Apartment[] = [];
+  filteredApartments: Apartment[] = [];
   showAffiliated = false;
   form: {
+    buildingId?: number;
     fullName: string;
     email: string;
     phone: string;
@@ -62,7 +68,13 @@ export class TenantsNewComponent {
   };
   errors: any = {};
 
-  constructor(private tenantsService: TenantsService, private router: Router) {
+  constructor(
+    private tenantsService: TenantsService,
+    private router: Router,
+    private apartmentsService: ApartmentsService,
+    private buildingsService: BuildingsService
+  ) {
+    this.buildings = this.buildingsService.getBuildings();
     // Sélection automatique de l'appartement créé si présent
     const urlParams = new URLSearchParams(window.location.search);
     const newApartmentId = urlParams.get('newApartmentId');
@@ -74,29 +86,37 @@ export class TenantsNewComponent {
         if (v) (this.form as any)[k] = v;
       });
     }
+    // Charge les appartements libres (sans locataire)
+    this.availableApartments = this.apartmentsService.getApartments().filter(a => !a.tenant);
+    this.filteredApartments = [];
   }
 
-    validate() {
-      this.errors = {};
-      if (!this.form.fullName) this.errors.fullName = 'Nom Complet requis';
-      if (!this.form.country) this.errors.country = 'Pays requis';
-      if (!this.form.email) this.errors.email = 'Email requis';
-      if (!this.form.phone) this.errors.phone = 'Téléphone requis';
-      if (!this.form.address) this.errors.address = 'Adresse requise';
-      if (!this.form.rentalType) this.errors.rentalType = 'Type de location requise';
-      if (!this.form.maritalStatus) this.errors.maritalStatus = 'État civil requis';
-      if (!this.form.emergencyContact) this.errors.emergencyContact = "Contact d'urgence requis";
-      // if (!this.form.identityImage) this.errors.identityImage = 'Photo d\'identité requise';
-      // if (!this.form.identityType) this.errors.identityType = 'Type d\'identité requis';
-      // if (!this.form.identityNumber) this.errors.identityNumber = 'Numéro d\'identité requis';
-      if (this.showAffiliated) {
-        if (!this.form.affiliatedPerson.relation) this.errors.affiliatedPersonRelation = 'Type de relation requis';
-        if (!this.form.affiliatedPerson.fullName) this.errors.affiliatedPersonFullName = 'Prénom et nom requis';
-        if (!this.form.affiliatedPerson.phone) this.errors.affiliatedPersonPhone = 'Téléphone requis';
-        if (!this.form.affiliatedPerson.address) this.errors.affiliatedPersonAddress = 'Adresse requise';
-      }
-      return Object.keys(this.errors).length === 0;
+  onBuildingChange() {
+    this.filteredApartments = this.availableApartments.filter(a => a.buildingId === Number(this.form.buildingId));
+    this.form.apartments = [];
+  }
+
+  validate() {
+    this.errors = {};
+    if (!this.form.fullName) this.errors.fullName = 'Nom Complet requis';
+    if (!this.form.country) this.errors.country = 'Pays requis';
+    if (!this.form.email) this.errors.email = 'Email requis';
+    if (!this.form.phone) this.errors.phone = 'Téléphone requis';
+    if (!this.form.address) this.errors.address = 'Adresse requise';
+    if (!this.form.rentalType) this.errors.rentalType = 'Type de location requise';
+    if (!this.form.maritalStatus) this.errors.maritalStatus = 'État civil requis';
+    if (!this.form.emergencyContact) this.errors.emergencyContact = "Contact d'urgence requis";
+    // if (!this.form.identityImage) this.errors.identityImage = 'Photo d\'identité requise';
+    // if (!this.form.identityType) this.errors.identityType = 'Type d\'identité requis';
+    // if (!this.form.identityNumber) this.errors.identityNumber = 'Numéro d\'identité requis';
+    if (this.showAffiliated) {
+      if (!this.form.affiliatedPerson.relation) this.errors.affiliatedPersonRelation = 'Type de relation requis';
+      if (!this.form.affiliatedPerson.fullName) this.errors.affiliatedPersonFullName = 'Prénom et nom requis';
+      if (!this.form.affiliatedPerson.phone) this.errors.affiliatedPersonPhone = 'Téléphone requis';
+      if (!this.form.affiliatedPerson.address) this.errors.affiliatedPersonAddress = 'Adresse requise';
     }
+    return Object.keys(this.errors).length === 0;
+  }
 
   create() {
     if (!this.validate()) return;

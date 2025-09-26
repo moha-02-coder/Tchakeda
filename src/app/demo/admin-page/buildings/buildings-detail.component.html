@@ -1,4 +1,5 @@
 <div class="page-container">
+  <!-- En-tête -->
   <div class="page-header">
     <button class="btn btn-light back-btn" (click)="back()">
       <i class="fas fa-arrow-left"></i> Bâtiments
@@ -6,7 +7,7 @@
     <h4 class="page-title">Détail du bâtiment</h4>
   </div>
 
-  <!-- Modal de suppression -->
+  <!-- Modal suppression -->
   <div *ngIf="showDeleteConfirm" class="modal-overlay">
     <div class="modal-card">
       <h5>Confirmer la suppression</h5>
@@ -18,15 +19,15 @@
     </div>
   </div>
 
+  <!-- Informations du bâtiment -->
   <div class="form-card">
-    <!-- En-tête avec actions -->
     <div class="card-header">
       <h5>Informations du bâtiment</h5>
       <div class="action-buttons" *ngIf="!editMode">
         <button class="action-btn edit" (click)="enableEdit()" title="Modifier">
           <i class="fas fa-edit"></i>
         </button>
-        <button class="action-btn delete" title="Supprimer le bâtiment" (click)="showDeleteConfirm = true">
+        <button class="action-btn delete" (click)="showDeleteConfirm = true" title="Supprimer le bâtiment">
           <i class="fas fa-trash"></i>
         </button>
       </div>
@@ -41,101 +42,80 @@
     </div>
 
     <!-- Mode édition -->
-    <form *ngIf="editMode" (ngSubmit)="save()" id="buildingForm" class="building-form">
+    <form *ngIf="editMode" id="buildingForm" (ngSubmit)="save()" class="building-form">
       <div class="form-grid">
-        <!-- Image du bâtiment -->
-        <div class="form-group full-width">
-          <label>Image du bâtiment</label>
-          <div class="building-image-container">
-            <div class="image-wrapper">
-              <div class="image-container">
-                <img [src]="form.image || 'assets/images/default-building.jpg'" alt="Bâtiment" class="building-img" />
-                <div class="image-overlay">
-                  <i class="fas fa-camera"></i>
-                  <span>Changer l'image</span>
-                </div>
-              </div>
-              <input type="file" id="buildingImageUpload" (change)="onBuildingImageSelected($event)" class="file-input" accept="image/*" />
-              <label for="buildingImageUpload" class="file-input-label">Parcourir</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nom du bâtiment -->
+        <!-- Nom -->
         <div class="form-group">
-          <input type="text" id="name" [(ngModel)]="form.name" name="name" class="underline-input" required placeholder="Nom du bâtiment" />
+          <input type="text" id="name" [(ngModel)]="form.name" name="name" class="underline-input" placeholder="Nom du bâtiment" required />
           <label for="name" class="label">Nom du bâtiment</label>
           <div class="error" *ngIf="errors.name">{{ errors.name }}</div>
         </div>
 
-        <!-- Type de bâtiment -->
+        <!-- Type -->
         <div class="form-group">
-          <div class="input-with-button">
-            <select id="type" [(ngModel)]="form.type" name="type" class="underline-input" required (change)="onTypeChange($event)">
-              <option [ngValue]="null">Sélectionner...</option>
-              <option value="résidentiel">Résidentiel</option>
-              <option value="commercial">Commercial</option>
-              <option value="mixte">Mixte</option>
-              <option value="autre">Autre...</option>
-            </select>
-            <!-- label for select -->
-            <label for="type" class="label">Type de bâtiment</label>
-          </div>
-          <input *ngIf="isCustomType" type="text" id="customType" [(ngModel)]="form.customType" name="customType" class="underline-input custom-type-input" placeholder="Saisir le type" />
+          <select id="type" [(ngModel)]="form.type" name="type" class="underline-input" (change)="onTypeChange($event)" required>
+            <option [ngValue]="null">Sélectionner...</option>
+            <option value="résidentiel">Résidentiel</option>
+            <option value="commercial">Commercial</option>
+            <option value="mixte">Mixte</option>
+            <option value="autre">Autre...</option>
+          </select>
+          <label for="type" class="label">Type de bâtiment</label>
+          <input *ngIf="isCustomType" type="text" [(ngModel)]="form.customType" name="customType" class="underline-input custom-type-input" placeholder="Saisir le type" />
           <div class="error" *ngIf="errors.type">{{ errors.type }}</div>
           <div class="error" *ngIf="errors.customType">{{ errors.customType }}</div>
         </div>
 
-        <!-- Nombre d'étages -->
+        <!-- Étages -->
         <div class="form-group">
-          <input type="number" id="floors" [(ngModel)]="form.floors" name="floors" class="underline-input" required min="1" placeholder="Nombre d'étages" />
-          <label for="floors" class="label">Nombre d'étages</label>
+          <input type="number" [(ngModel)]="form.floors" name="floors" class="underline-input" min="1" placeholder="Nombre d'étages" required />
+          <label class="label">Nombre d'étages</label>
           <div class="error" *ngIf="errors.floors">{{ errors.floors }}</div>
         </div>
 
-        <!-- Nombre d'appartements -->
+        <!-- Appartements -->
         <div class="form-group">
-          <input type="number" id="apartments" [(ngModel)]="form.apartments" name="apartments" class="underline-input" required min="1" placeholder="Nombre d'appartements" />
-          <label for="apartments" class="label">Nombre d'appartements</label>
+          <input type="number" [(ngModel)]="form.apartments" name="apartments" class="underline-input" min="1" placeholder="Nombre d'appartements" required />
+          <label class="label">Nombre d'appartements</label>
           <div class="error" *ngIf="errors.apartments">{{ errors.apartments }}</div>
         </div>
 
         <!-- Adresse -->
         <div class="form-group">
-          <input type="text" id="address" [(ngModel)]="form.address" name="address" class="underline-input" required placeholder="Adresse" />
-          <label for="address" class="label">Adresse</label>
+          <input type="text" [(ngModel)]="form.address" name="address" class="underline-input" placeholder="Adresse" required />
+          <label class="label">Adresse</label>
           <div class="error" *ngIf="errors.address">{{ errors.address }}</div>
         </div>
 
         <!-- Ville -->
         <div class="form-group">
-          <input type="text" id="city" [(ngModel)]="form.city" name="city" class="underline-input" required placeholder="Ville" />
-          <label for="city" class="label">Ville</label>
+          <input type="text" [(ngModel)]="form.city" name="city" class="underline-input" placeholder="Ville" required />
+          <label class="label">Ville</label>
           <div class="error" *ngIf="errors.city">{{ errors.city }}</div>
         </div>
 
-        <!-- Quartier / Région -->
+        <!-- Région -->
         <div class="form-group">
-          <input type="text" id="region" [(ngModel)]="form.region" name="region" class="underline-input" required placeholder="Quartier / Région" />
-          <label for="region" class="label">Quartier / Région</label>
+          <input type="text" [(ngModel)]="form.region" name="region" class="underline-input" placeholder="Quartier / Région" required />
+          <label class="label">Quartier / Région</label>
           <div class="error" *ngIf="errors.region">{{ errors.region }}</div>
         </div>
 
-        <!-- Date de construction -->
+        <!-- Date construction -->
         <div class="form-group">
-          <input type="date" id="constructionDate" [(ngModel)]="form.constructionDate" name="constructionDate" class="underline-input" required placeholder="Date de construction" />
-          <label for="constructionDate" class="label">Date de construction</label>
+          <input type="date" [(ngModel)]="form.constructionDate" name="constructionDate" class="underline-input" required />
+          <label class="label">Date de construction</label>
           <div class="error" *ngIf="errors.constructionDate">{{ errors.constructionDate }}</div>
         </div>
 
         <!-- Propriétaire -->
         <div class="form-group">
           <div class="select-with-action">
-            <select id="ownerId" [(ngModel)]="form.ownerId" name="ownerId" class="underline-input" required>
-              <option [ngValue]="null">Sélectionner un propriétaire...</option>
+            <select [(ngModel)]="form.ownerId" name="ownerId" class="underline-input" required>
+              <option [ngValue]="null">Sélectionner...</option>
               <option *ngFor="let owner of owners" [ngValue]="owner.id">{{ owner.name }}</option>
             </select>
-            <label for="ownerId" class="label">Propriétaire</label>
+            <label class="label">Propriétaire</label>
             <button type="button" class="btn btn-link" (click)="goToNewOwner()" title="Ajouter un propriétaire">
               <i class="fas fa-plus"></i>
             </button>
@@ -151,69 +131,25 @@
       </div>
     </form>
 
-    <!-- Mode visualisation -->
-    <div *ngIf="!editMode" class="view-mode">
-      <!-- Image du bâtiment -->
-      <div class="building-image-container full-width">
-        <div class="image-wrapper">
-          <div class="image-container">
-            <img [src]="building?.image || 'assets/images/default-building.jpg'" alt="Bâtiment" class="building-img" />
-          </div>
-        </div>
-        <div *ngIf="!building?.image" class="no-image">
-          <i class="fas fa-building"></i>
-          <p>Aucune photo disponible</p>
-        </div>
-      </div>
-
-      <!-- Infos en grille -->
-      <div class="details-grid">
-        <div class="form-group">
-          <input id="view-name" class="underline-input" [value]="building?.name || '-'" readonly />
-          <label for="view-name" class="label">Nom du bâtiment</label>
-        </div>
-        <div class="form-group">
-          <input id="view-type" class="underline-input" [value]="building?.type === 'autre' ? (building?.customType || '-') : building?.type || '-'" readonly />
-          <label for="view-type" class="label">Type de bâtiment</label>
-        </div>
-        <div class="form-group">
-          <input id="view-floors" class="underline-input" [value]="building?.floors || '-'" readonly />
-          <label for="view-floors" class="label">Nombre d'étages</label>
-        </div>
-        <div class="form-group">
-          <input id="view-apartments" class="underline-input" [value]="building?.apartments || '-'" readonly />
-          <label for="view-apartments" class="label">Nombre d'appartements</label>
-        </div>
-        <div class="form-group">
-          <input id="view-address" class="underline-input" [value]="building?.address || '-'" readonly />
-          <label for="view-address" class="label">Adresse</label>
-        </div>
-        <div class="form-group">
-          <input id="view-city" class="underline-input" [value]="building?.city || '-'" readonly />
-          <label for="view-city" class="label">Ville</label>
-        </div>
-        <div class="form-group">
-          <input id="view-region" class="underline-input" [value]="building?.region || '-'" readonly />
-          <label for="view-region" class="label">Quartier / Région</label>
-        </div>
-        <div class="form-group">
-          <input id="view-constructionDate" class="underline-input" [value]="building && building.constructionDate ? (building.constructionDate | date:'dd/MM/yyyy') : '-'" readonly />
-          <label for="view-constructionDate" class="label">Date de construction</label>
-        </div>
-        <div class="form-group">
-          <input id="view-ownerId" class="underline-input" [value]="getOwnerName(building?.ownerId) || '-'" readonly />
-          <label for="view-ownerId" class="label">Propriétaire</label>
-        </div>
-      </div>
+    <!-- Mode lecture -->
+    <div *ngIf="!editMode" class="details-grid">
+  <div class="form-group">Nom : <span class="label">{{ building?.name || '-' }}</span></div>
+  <div class="form-group">Type : <span class="label">{{ building?.type === 'autre' ? building?.customType : building?.type || '-' }}</span></div>
+  <div class="form-group">Étages : <span class="label">{{ building?.floors || '-' }}</span></div>
+  <div class="form-group">Appartements : <span class="label">{{ building?.apartments || '-' }}</span></div>
+  <div class="form-group">Adresse : <span class="label">{{ building?.address || '-' }}</span></div>
+  <div class="form-group">Ville : <span class="label">{{ building?.city || '-' }}</span></div>
+  <div class="form-group">Région : <span class="label">{{ building?.region || '-' }}</span></div>
+  <div class="form-group">Date construction : <span class="label">{{ building?.constructionDate | date:'dd/MM/yyyy' }}</span></div>
+  <div class="form-group">Propriétaire : <span class="label">{{ getOwnerName(building?.ownerId) || '-' }}</span></div>
     </div>
   </div>
 
-  <!-- Section appartements du bâtiment -->
-  <div class="form-card" *ngIf="!editMode && buildingApartments.length > 0">
+  <!-- Appartements -->
+  <div class="form-card" *ngIf="buildingApartments.length > 0">
     <div class="card-header">
       <h5>Appartements du bâtiment</h5>
     </div>
-    
     <div class="table-container">
       <table class="data-table">
         <thead>
@@ -222,53 +158,49 @@
             <th>Type</th>
             <th>Pièces</th>
             <th>Locataire</th>
-            <th>Mensualité</th>
+            <th>Loyer</th>
             <th>Statut</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let apartment of buildingApartments" (click)="goToApartment(apartment.id)" class="clickable-row">
-            <td>{{ apartment.name || '-' }}</td>
-            <td>{{ apartment.type || '-' }}</td>
-            <td>{{ apartment.rooms || '-' }}</td>
+            <td>{{ apartment.name }}</td>
+            <td>{{ apartment.type }}</td>
+            <td>{{ apartment.rooms }}</td>
             <td>{{ apartment.tenant || 'Libre' }}</td>
             <td>{{ apartment.mention ? (apartment.mention | number) + ' FCFA' : '-' }}</td>
             <td>
-              <span class="status-badge" [ngClass]="{
-                'status-occupied': apartment.tenant,
-                'status-free': !apartment.tenant
-              }">
+              <span class="status-badge" [ngClass]="apartment.tenant ? 'status-occupied' : 'status-free'">
                 {{ apartment.tenant ? 'Occupé' : 'Libre' }}
               </span>
             </td>
+          </tr>
+          <tr *ngIf="buildingApartments.length === 0">
+            <td colspan="6" class="text-center text-muted">Aucun appartement trouvé</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Section statistiques -->
+  <!-- Statistiques -->
   <div class="form-card" *ngIf="!editMode">
     <div class="card-header">
-      <h5>Statistiques du bâtiment</h5>
+      <h5>Statistiques</h5>
     </div>
-    
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-value">{{ buildingApartments.length }}</div>
         <div class="stat-label">Appartements total</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-value">{{ occupiedApartmentsCount }}</div>
-        <div class="stat-label">Appartements occupés</div>
+        <div class="stat-label">Occupés</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-value">{{ freeApartmentsCount }}</div>
-        <div class="stat-label">Appartements libres</div>
+        <div class="stat-label">Libres</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-value">{{ occupancyRate }}%</div>
         <div class="stat-label">Taux d'occupation</div>

@@ -4,6 +4,7 @@ import { TenantsService, Tenant } from './tenants.service';
 import { RentalsService, Rental } from '../rentals/rentals.service';
 import { ApartmentsService, Apartment } from '../apartments/apartments.service';
 import { OwnersService, Owner } from '../owners/owners.service';
+import { BuildingsService, Building } from '../buildings/buildings.service';
 
 @Component({
   selector: 'app-tenants-detail',
@@ -12,6 +13,8 @@ import { OwnersService, Owner } from '../owners/owners.service';
   standalone: false
 })
 export class TenantsDetailComponent implements OnInit {
+  buildings: Building[] = [];
+  filteredApartments: Apartment[] = [];
   showDeleteConfirm = false;
   tenant: Tenant | undefined;
   rentalDetails: Array<{
@@ -35,8 +38,16 @@ export class TenantsDetailComponent implements OnInit {
     private tenantsService: TenantsService,
     private rentalsService: RentalsService,
     private apartmentsService: ApartmentsService,
-    private ownersService: OwnersService
-  ) {}
+    private ownersService: OwnersService,
+    private buildingsService: BuildingsService
+  ) {
+    this.buildings = this.buildingsService.getBuildings();
+  }
+
+  onBuildingChange() {
+    this.filteredApartments = this.apartments.filter(a => a.buildingId === Number(this.form.buildingId));
+    this.form.apartmentId = null;
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -218,7 +229,7 @@ export class TenantsDetailComponent implements OnInit {
     const tenant = this.tenants.find(t => t.id === tenantId);
     return tenant ? tenant.fullName : '-';
   }
-
+  
   // Activation du mode édition
   enableEdit(): void {
     this.editMode = true;

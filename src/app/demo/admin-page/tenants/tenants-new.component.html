@@ -129,6 +129,20 @@
     </div>
   </section>
 
+    <!-- Sélection du bâtiment puis des appartements à louer -->
+    <div class="form-group">
+      <label for="buildingId" class="label">Bâtiment</label>
+      <select id="buildingId" [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" (change)="onBuildingChange()">
+        <option value="" disabled selected>Choisir un bâtiment</option>
+        <option *ngFor="let b of buildings" [value]="b.id">{{ b.name }}</option>
+      </select>
+    </div>
+    <div class="form-group" *ngIf="form.buildingId">
+      <label for="apartments" class="label">Appartements à louer (optionnel)</label>
+      <select id="apartments" [(ngModel)]="form.apartments" name="apartments" class="underline-input" multiple>
+        <option *ngFor="let apt of filteredApartments" [value]="apt.id">{{ apt.name }} - {{ apt.address }}</option>
+      </select>
+    </div>
     <!-- Actions -->
     <div class="form-actions">
       <button type="button" class="btn btn-light" (click)="cancel()">Annuler</button>

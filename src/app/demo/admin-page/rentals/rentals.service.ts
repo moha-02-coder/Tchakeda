@@ -61,7 +61,7 @@ export class RentalsService {
     const newRental: Rental = {
       ...rental,
       apartmentName,
-      tenantName,
+  tenantName,
       id: Date.now(),
       createdAt: new Date().toISOString()
     };

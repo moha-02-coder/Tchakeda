@@ -1,0 +1,38 @@
+<div class="page-container" *ngIf="collector as c">
+  <div class="page-header">
+    <h4 class="page-title">Détail recouvreur</h4>
+    <button class="btn btn-light" (click)="back()"><i class="fas fa-arrow-left"></i> Retour</button>
+  </div>
+  <div class="content-container">
+    <form class="form-card" (ngSubmit)="save()">
+      <div class="form-group">
+        <label class="label">Nom complet</label>
+        <input type="text" [(ngModel)]="c.fullName" name="fullName" class="underline-input" required />
+      </div>
+      <div class="form-group">
+        <label class="label">Pays</label>
+        <input type="text" [(ngModel)]="c.country" name="country" class="underline-input" required />
+      </div>
+      <div class="form-group">
+        <label class="label">Adresse</label>
+        <input type="text" [(ngModel)]="c.address" name="address" class="underline-input" required />
+      </div>
+      <div class="form-group">
+        <label class="label">Nombre de maisons à recouvrer</label>
+        <input type="number" [(ngModel)]="c.houseCount" name="houseCount" class="underline-input" required min="0" />
+      </div>
+      <div class="form-group">
+        <label class="label">Téléphone</label>
+        <input type="text" [(ngModel)]="c.phone" name="phone" class="underline-input" required />
+      </div>
+      <div class="form-group">
+        <label class="label">Email</label>
+        <input type="email" [(ngModel)]="c.email" name="email" class="underline-input" required />
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="button" class="btn btn-danger" (click)="delete()">Supprimer</button>
+      </div>
+    </form>
+  </div>
+</div>

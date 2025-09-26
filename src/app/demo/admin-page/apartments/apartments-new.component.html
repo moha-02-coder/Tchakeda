@@ -52,29 +52,32 @@
         </div>
 
         <!-- Location (montant) -->
-        <div class="form-group">
-          <div class="input-with-currency">
-            <input type="number" id="rent" [(ngModel)]="form.rent" name="rent" class="underline-input" 
-                   required min="1" placeholder="Loyer mensuel" #rent="ngModel" />
-            <span class="currency">FCFA</span>
-          </div>
-          <label for="rent" class="label">Loyer mensuel <span class="required">*</span></label>
-          <div class="error" *ngIf="(rent.invalid && rent.touched) || errors.rent">
+    <!-- Mensualité -->
+    <div class="form-group">
+      <div class="input-with-button">
+        <input type="number" id="rent" [(ngModel)]="form.rent" name="rent" class="underline-input" required min="1000" step="1000" placeholder="Loyer mensuel (CFA)" #rent="ngModel" />
+        <label for="rent" class="label">Loyer mensuel (CFA)</label>
+      </div>
+      <div class="error" *ngIf="(rent.invalid && rent.touched) || errors.rent">
             {{ errors.rent || 'Le loyer est requis' }}
-          </div>
-        </div>
+      </div>
+    </div>
 
         <!-- Statut -->
         <div class="form-group">
-          <div class="status-display">
-            <span class="status-badge" [ngClass]="{
-              'status-available': form.status === 'Libre',
-              'status-occupied': form.status === 'Occupé'
-            }">
-              {{ form.status || 'Libre' }}
-            </span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <select id="tenantId" class="underline-input tenant-select" (change)="onTenantSelected($event)" [value]="form.tenantId || ''">
+              <option value="">Libre</option>
+              <option *ngFor="let tenant of tenants" [value]="tenant.id">{{ tenant.fullName }}</option>
+            </select>
+            <label for="tenantId" class="label">Statut</label>
+            <button *ngIf="form.status === 'Libre'" type="button" class="btn btn-outline-primary btn-sm" (click)="openTenantDialog()">
+              <i class="fas fa-user-plus"></i> Nouveau locataire
+            </button>
+            <button *ngIf="form.status === 'Occupé'" type="button" class="btn btn-outline-danger btn-sm" (click)="removeTenant()">
+              <i class="fas fa-user-times"></i> Retirer le locataire
+            </button>
           </div>
-          <label for="status" class="label">Statut</label>
         </div>
 
         <!-- Bâtiment -->

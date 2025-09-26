@@ -51,6 +51,28 @@
   <div class="form-group"><input type="text" id="phone" [(ngModel)]="form.phone" name="phone" class="underline-input" required placeholder="Téléphone" /><label for="phone" class="label">Téléphone</label></div>
   <div class="form-group"><input type="email" id="email" [(ngModel)]="form.email" name="email" class="underline-input" placeholder="Email" /><label for="email" class="label">Email</label></div>
   <div class="form-group"><input type="text" id="profession" [(ngModel)]="form.profession" name="profession" class="underline-input" placeholder="Profession" /><label for="profession" class="label">Profession</label></div>
+
+  <!-- Sélection du bâtiment et de l'appartement à louer -->
+  <div class="form-group">
+    <label for="buildingId" class="label">Bâtiment</label>
+    <select [(ngModel)]="form.buildingId" name="buildingId" class="underline-input" (change)="onBuildingChange()">
+      <option value="" disabled>Choisir un bâtiment</option>
+      <option *ngFor="let b of buildings" [value]="b.id">{{ b.name }}</option>
+    </select>
+    <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
+  </div>
+  <div class="form-group" *ngIf="form.buildingId">
+    <label for="apartmentId" class="label">Appartement assigné</label>
+    <select [(ngModel)]="form.apartmentId" name="apartmentId" class="underline-input">
+      <option value="" disabled>Choisir un appartement</option>
+      <option *ngFor="let apt of filteredApartments" [value]="apt.id">{{ apt.name }} - {{ apt.address }}</option>
+    </select>
+    <div class="info-value" *ngIf="!editMode && form.apartmentId">
+      Appartement actuel :
+      <span>{{ getApartmentName(form.apartmentId) }}</span>
+    </div>
+    <div class="error" *ngIf="errors.apartmentId">{{ errors.apartmentId }}</div>
+  </div>
     </div>
     <!-- Section personne affiliée -->
     <div class="affiliation-section">

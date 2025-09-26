@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { OwnerFormComponent } from '../owners/components/owner-form.component';
+import { BuildingFormComponent } from '../buildings/components/building-form.component';
+import { ApartmentFormComponent } from '../apartments/components/apartment-form.component';
+import { TenantFormComponent } from '../tenants/components/tenant-form.component';
 import { RentalsService } from './rentals.service';
 import { ApartmentsService } from '../apartments/apartments.service';
 import { TenantsService } from '../tenants/tenants.service';
@@ -22,7 +27,7 @@ export class RentalsNewComponent implements OnInit {
     tenantId: 0,
     startDate: '',
     owenerName: '',
-    tenantName: '',
+  tenantName: '',
     apartmentName: '',
     endDate: '',
     price: 1000,
@@ -48,7 +53,8 @@ export class RentalsNewComponent implements OnInit {
     private apartmentsService: ApartmentsService,
     private tenantsService: TenantsService,
     private ownersService: OwnersService,
-    private buildingsService: BuildingsService
+    private buildingsService: BuildingsService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -60,19 +66,59 @@ export class RentalsNewComponent implements OnInit {
 
   // --- Navigation création ---
   goToNewOwner() {
-    this.router.navigate(['demo/admin-page/owners/new']);
+    const dialogRef = this.dialog.open(OwnerFormComponent, {
+      width: '500px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.owners = this.ownersService.getOwners();
+        this.form.ownerId = result.id;
+        this.onOwnerChange();
+      }
+    });
   }
 
   goToNewBuilding() {
-    this.router.navigate(['demo/admin-page/buildings/new']);
+    const dialogRef = this.dialog.open(BuildingFormComponent, {
+      width: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.buildings = this.buildingsService.getBuildings();
+        this.filteredBuildings = this.buildings.filter(b => b.ownerId === this.form.ownerId);
+        this.form.buildingId = result.id;
+        this.onBuildingChange();
+      }
+    });
   }
 
   goToNewApartment() {
-    this.router.navigate(['demo/admin-page/apartments/new']);
+    const dialogRef = this.dialog.open(ApartmentFormComponent, {
+      width: '600px',
+      data: { buildingId: this.form.buildingId }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.apartments = this.apartmentsService.getApartments();
+        this.filteredApartments = this.apartments.filter(a => a.buildingId === this.form.buildingId);
+        this.form.apartmentId = result.id;
+      }
+    });
   }
 
   goToNewTenant() {
-    this.router.navigate(['demo/admin-page/tenants/new']);
+    const dialogRef = this.dialog.open(TenantFormComponent, {
+      width: '500px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tenants = this.tenantsService.getTenants();
+        this.form.tenantId = result.id;
+      }
+    });
   }
 
   // --- Hiérarchie ---

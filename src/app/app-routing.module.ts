@@ -56,6 +56,10 @@ const routes: Routes = [
         path: 'demo/admin-page/recoveries/payments',
         loadComponent: () => import('./demo/admin-page/recoveries/recoveries-payments.component').then(c => c.RecoveriePaymentsComponent)
       },
+      {
+        path: 'demo/admin-page/collectors',
+        loadChildren: () => import('./demo/admin-page/collectors/collectors.module').then(m => m.CollectorsModule)
+      },
     ]
   },
   {

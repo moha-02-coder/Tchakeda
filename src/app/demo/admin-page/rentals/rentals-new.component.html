@@ -49,7 +49,7 @@
       <div class="input-with-button">
         <select id="tenantId" [(ngModel)]="form.tenantId" name="tenantId" class="underline-input" required>
           <option [ngValue]="0">Sélectionner...</option>
-          <option *ngFor="let tenant of tenants" [ngValue]="tenant.id">{{ tenant.name }}</option>
+          <option *ngFor="let tenant of tenants" [ngValue]="tenant.id">{{ tenant.fullName }}</option>
         </select>
         <label for="tenantId" class="label">Locataire</label>
         <button type="button" class="btn btn-light" (click)="goToNewTenant()">Nouveau locataire</button>
@@ -60,10 +60,8 @@
     <!-- Mensualité -->
     <div class="form-group full-width">
       <div class="input-with-button">
-        <button type="button" class="btn btn-light" (click)="decrementPrice()">-</button>
         <input type="number" id="price" [(ngModel)]="form.price" name="price" class="underline-input" required min="1000" step="1000" placeholder="Loyer mensuel (CFA)" />
         <label for="price" class="label">Loyer mensuel (CFA)</label>
-        <button type="button" class="btn btn-light" (click)="incrementPrice()">+</button>
       </div>
       <div class="error" *ngIf="errors['price']">{{ errors['price'] }}</div>
     </div>

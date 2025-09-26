@@ -1,3 +1,4 @@
+  // ...existing code...
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecoveriesService, Recovery } from './recoveries.service';
@@ -23,5 +24,10 @@ export class RecoveriesComponent implements OnInit {
 
   goToNew() {
     this.router.navigate(['demo/admin-page/recoveries/new']);
+  }
+
+
+  goToNewCollector() {
+    this.router.navigate(['demo/admin-page/collectors/new']);
   }
 }

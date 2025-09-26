@@ -1,6 +1,8 @@
 import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { BuildingsService } from '../../buildings/buildings.service';
+import { BuildingFormComponent } from '../../buildings/components/building-form.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,12 +26,16 @@ export class ApartmentFormComponent {
   @Input() initialData: any;
   @Output() saved = new EventEmitter<any>();
   form: FormGroup;
+  buildings: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef?: MatDialogRef<ApartmentFormComponent>
+    private dialogRef?: MatDialogRef<ApartmentFormComponent>,
+    private buildingsService?: BuildingsService,
+    private dialog?: MatDialog
   ) {
+    this.buildings = this.buildingsService?.getBuildings() || [];
     this.form = this.fb.group({
       name: [data?.name || '', Validators.required],
       type: [data?.type || '', Validators.required],
@@ -41,6 +47,20 @@ export class ApartmentFormComponent {
       images: [data?.images || []],
       city: [data?.city || ''],
       region: [data?.region || '']
+    });
+  }
+
+  openBuildingDialog() {
+    if (!this.dialog) return;
+    const dialogRef = this.dialog.open(BuildingFormComponent, {
+      width: '600px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && this.buildingsService) {
+        this.buildings = this.buildingsService.getBuildings();
+        this.form.patchValue({ buildingId: result.id });
+      }
     });
   }
 

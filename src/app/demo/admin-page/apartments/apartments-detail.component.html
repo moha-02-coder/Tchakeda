@@ -81,7 +81,7 @@
           </select>
           <div class="error" *ngIf="errors.buildingId">{{ errors.buildingId }}</div>
           <label for="buildingId" class="label">Bâtiment</label>
-          <button type="button" class="btn btn-link" (click)="goToNewBuilding()" title="Ajouter un bâtiment">
+          <button type="button" class="btn btn-link" (click)="openBuildingDialog()" title="Ajouter un bâtiment">
             <i class="fas fa-plus"></i>
           </button>
         </div>

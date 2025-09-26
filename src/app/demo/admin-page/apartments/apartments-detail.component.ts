@@ -168,6 +168,7 @@ export class ApartmentsDetailComponent implements OnInit {
   private buildingsService: BuildingsService,
   private tenantsService: TenantsService,
   private roomImagesService: RoomImagesService
+  
   ) {
     this.buildings = this.buildingsService.getBuildings();
     this.tenants = this.tenantsService.getTenants ? this.tenantsService.getTenants() : [];
@@ -270,6 +271,13 @@ export class ApartmentsDetailComponent implements OnInit {
         this.apartmentTypes.push(custom);
       }
     }
+  }
+
+  // Ouvre un modal pour ajouter un bâtiment (à implémenter selon ta lib de modale)
+  openBuildingDialog() {
+    // Ici tu peux ouvrir un modal Angular Material, Bootstrap, ou custom
+    // Exemple placeholder :
+    alert("Ouverture du modal d'ajout de bâtiment (à personnaliser)");
   }
 
   back() {

@@ -1,3 +1,11 @@
+// Variables
+$primary-color: #1976d2;
+$danger-color: #d32f2f;
+$success-color: #388e3c;
+$text-color: #333;
+$text-muted: #999;
+$border-color: #e0e0e0;
+$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 // Styles réutilisables pour champs de formulaire à label flottant
 
 .form-group {
@@ -57,4 +65,99 @@
     margin-top: 0.3rem;
     display: block;
   }
+  
+// Actions de formulaire
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+  
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  &.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  &.btn-outline-primary {
+    background: transparent;
+    border-color: $primary-color;
+    color: $primary-color;
+    
+    &:hover {
+      background: $primary-color;
+      color: white;
+    }
+  }
+}
+
+.btn-light {
+  background: #f8f9fa;
+  border-color: #ddd;
+  color: $text-color;
+  
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+.btn-primary {
+  background: $primary-color;
+  border-color: $primary-color;
+  color: rgb(13, 134, 233);
+  
+  &:hover {
+    background: darken($primary-color, 10%);
+    border-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-success {
+  background: $success-color;
+  border-color: $success-color;
+  color: rgba(15, 110, 10, 0.86);
+  
+  &:hover {
+    background: darken($success-color, 10%);
+    border-color: darken($success-color, 10%);
+  }
+}
+
+// Messages d'erreur
+.error {
+  color: $danger-color;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.required {
+  color: $danger-color;
+  font-weight: 600;
+}
 }

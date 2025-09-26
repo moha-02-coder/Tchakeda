@@ -34,7 +34,7 @@
 @import 'scss/themes/pages/dashboard';
 @import 'scss/themes/pages/authentication';
 
-@import 'scss/themes/chat/chat';
+// @import 'scss/themes/chat/chat';
 @import 'scss/themes/custom';
 @import 'scss/themes/minixs/button';
 @import 'scss/themes/minixs/card';
@@ -84,7 +84,7 @@ body {
     &:hover {
       background: #1976d2;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+      box-shadow: 0 4px 12px rgb(249, 249, 249);
     }
 
     &:disabled {
@@ -123,7 +123,7 @@ body {
   &:focus {
     outline: none;
     border-color: #e74c3c;
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 253, 253, 0.642);
   }
 
   &::placeholder {
